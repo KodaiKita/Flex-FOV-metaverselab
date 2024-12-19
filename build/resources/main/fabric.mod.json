@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "flexfov",
+  "version": "${version}",
+
+  "name": "Flex FOV",
+  "description": "Allows for changing the field of view from 0 to 360 degrees.",
+  "authors": [
+    "18107",
+    "Khonkhortisan",
+    "Shaunlebron"
+  ],
+  "contact": {
+    "sources": "https://github.com/18107/Flex-FOV-fabric"
+  },
+
+  "license": "GPLv3",
+  "icon": "assets/flexfov/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "net.id107.flexfov.FlexFOV"
+    ]
+  },
+  "mixins": [
+    "modid.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}

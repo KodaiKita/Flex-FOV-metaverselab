@@ -1,0 +1,6 @@
+v1	named	intermediary
+FIELD	net/id107/flexfov/mixin/BackgroundRendererMixin	F	red	field_4034
+FIELD	net/id107/flexfov/mixin/BackgroundRendererMixin	F	green	field_4033
+FIELD	net/id107/flexfov/mixin/BackgroundRendererMixin	F	blue	field_4032
+FIELD	net/id107/flexfov/mixin/GameRendererMixin	Lnet/minecraft/client/MinecraftClient;	client	field_4015
+FIELD	net/id107/flexfov/mixin/GameRendererMixin	Z	renderingPanorama	field_4001
