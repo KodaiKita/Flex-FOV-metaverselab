@@ -5,7 +5,7 @@ import net.id107.flexfov.projection.Fisheye;
 import net.id107.flexfov.projection.Projection;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.options.DoubleOption;
+import net.minecraft.client.option.DoubleOption;
 import net.minecraft.text.LiteralText;
 
 public class FisheyeGui extends AdvancedGui {

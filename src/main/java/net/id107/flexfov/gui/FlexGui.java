@@ -4,7 +4,7 @@ import net.id107.flexfov.ConfigManager;
 import net.id107.flexfov.projection.Flex;
 import net.id107.flexfov.projection.Projection;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.options.DoubleOption;
+import net.minecraft.client.option.DoubleOption;
 import net.minecraft.text.LiteralText;
 
 public class FlexGui extends SettingsGui {

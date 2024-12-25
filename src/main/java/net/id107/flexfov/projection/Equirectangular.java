@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL20;
 
 import net.id107.flexfov.Reader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.options.Perspective;
+import net.minecraft.client.option.Perspective;
 import net.minecraft.entity.Entity;
 
 public class Equirectangular extends Projection {
