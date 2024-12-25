@@ -8,7 +8,7 @@ import net.id107.flexfov.projection.Projection;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.util.math.Vec3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
@@ -47,8 +47,8 @@ public class EntityRendererMixin {
 			Vec3d entityPos = new Vec3d(currentEntity.getX(), currentEntity.getY(), currentEntity.getZ()).subtract(new Vec3d(currentEntity.prevX, currentEntity.prevY, currentEntity.prevZ)).multiply(Projection.getTickDelta()).add(new Vec3d(currentEntity.prevX, currentEntity.prevY, currentEntity.prevZ));
 			Vec3d dir = cameraPos.subtract(entityPos).normalize();
 			Quaternion quaternion = new Quaternion(0, 0, 0, 1);
-			quaternion.hamiltonProduct(Vector3f.POSITIVE_Y.getRadialQuaternion((float)Math.atan2(-dir.x, -dir.z)));
-			quaternion.hamiltonProduct(Vector3f.POSITIVE_X.getRadialQuaternion((float)Math.asin(dir.y)));
+			quaternion.hamiltonProduct(Vec3f.POSITIVE_Y.getRadialQuaternion((float)Math.atan2(-dir.x, -dir.z)));
+			quaternion.hamiltonProduct(Vec3f.POSITIVE_X.getRadialQuaternion((float)Math.asin(dir.y)));
 			matrixStack.multiply(quaternion);
 		}
 		return matrixStack;
