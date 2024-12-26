@@ -57,6 +57,12 @@ public class Cubic extends Projection {
 	}
 
 	@Override
+	public void saveRenderPass() {
+		if (renderPass > 4) return;
+		super.saveRenderPass();
+	}
+
+	@Override
 	public void renderWorld(float tickDelta, long startTime, boolean tick) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		Projection.tickDelta = tickDelta;
