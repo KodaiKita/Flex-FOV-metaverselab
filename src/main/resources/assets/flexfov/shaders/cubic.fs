@@ -3,12 +3,12 @@
 /* This comes interpolated from the vertex shader */
 varying vec2 texcoord;
 
-/* The 6 textures to be rendered */
+/* The 4 textures to be rendered */
 uniform sampler2D texFront;
-uniform sampler2D texBack;
+// uniform sampler2D texBack;
 uniform sampler2D texLeft;
 uniform sampler2D texRight;
-uniform sampler2D texTop;
+// uniform sampler2D texTop;
 uniform sampler2D texBottom;
 
 uniform int antialiasing;
@@ -41,19 +41,19 @@ void main(void) {
 			else if (coord.x < 0.5) {
 				colorN[loop] = vec4(texture2D(texRight, vec2(coord.x*2.0, coord.y*1.5+0.5)).rgb, 1.0);
 			}
-			//Back
+			// Background color for the rest
 			else {
-				colorN[loop] = vec4(texture2D(texBack, vec2(coord.x*2.0-1.0, coord.y*1.5+0.5)).rgb, 1.0);
-			}
+			    colorN[loop] = backgroundColor;
+            }
 		}
 		else if (coord.x < 0.0 && coord.x >= -0.5) {
 			//Bottom
 			if (coord.y < -0.333333333) {
 				colorN[loop] = vec4(texture2D(texBottom, vec2(coord.x*2.0+1.0, coord.y*1.5+1.5)).rgb, 1.0);
 			}
-			//Top
+			//Top (Disabled)
 			else {
-				colorN[loop] = vec4(texture2D(texTop, vec2(coord.x*2.0+1.0, coord.y*1.5-0.5)).rgb, 1.0);
+				colorN[loop] = backgroundColor;
 			}
 		}
 		else {

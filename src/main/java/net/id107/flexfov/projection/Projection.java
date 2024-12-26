@@ -22,8 +22,8 @@ import net.minecraft.util.math.Quaternion;
 public abstract class Projection {
 	
 	private static Projection currentProjection;
-	private static ShaderManager shader = new ShaderManager();
-	
+	protected static ShaderManager shader = new ShaderManager();
+
 	public static float backgroundRed;
 	public static float backgroundGreen;
 	public static float backgroundBlue;
@@ -36,11 +36,11 @@ public abstract class Projection {
 	
 	protected int renderPass;
 	
-	private static boolean hudHidden;
-	private static float tickDelta;
+	protected static boolean hudHidden;
+	protected static float tickDelta;
 	
-	private static int screenWidth;
-	private static int screenHeight;
+	protected static int screenWidth;
+	protected static int screenHeight;
 	
 	public static Projection getProjection() {
 		if (currentProjection == null) {
