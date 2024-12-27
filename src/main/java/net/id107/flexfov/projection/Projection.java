@@ -368,7 +368,7 @@ public abstract class Projection {
 		return getFovX()*displayHeight/displayWidth;
 	}
 
-	public boolean isCubicMode() {
+	public static boolean isCubicMode() {
 		return Projection.getProjection() instanceof Cubic;
 	}
 }
