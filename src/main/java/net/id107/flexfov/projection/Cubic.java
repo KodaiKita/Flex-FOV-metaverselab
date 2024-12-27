@@ -58,7 +58,7 @@ public class Cubic extends Projection {
 
 	@Override
 	public void saveRenderPass() {
-		if (renderPass > 4) return;
+		if (renderPass > 3) return;
 		super.saveRenderPass();
 	}
 
