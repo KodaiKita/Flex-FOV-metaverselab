@@ -36,6 +36,8 @@ public class BufferManager {
 		
 		Window window = MinecraftClient.getInstance().getWindow();
 		int width = Math.min(window.getWidth(), window.getHeight());
+
+		// Create a framebuffer with a square texture
 		framebuffer = new Framebuffer(width, width, false, false);
 		
 		for (int i = 0; i < framebufferTextures.length; i++) {
