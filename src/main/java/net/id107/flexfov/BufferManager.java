@@ -2,6 +2,7 @@ package net.id107.flexfov;
 
 import java.nio.ByteBuffer;
 
+import net.id107.flexfov.projection.Projection;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.MinecraftClient;
@@ -36,11 +37,19 @@ public class BufferManager {
 		
 		Window window = MinecraftClient.getInstance().getWindow();
 		int width = Math.min(window.getWidth(), window.getHeight());
+		int height = (int) (width);
 
 		// Create a framebuffer with a square texture
-		framebuffer = new Framebuffer(width, width, false, false);
-		
-		for (int i = 0; i < framebufferTextures.length; i++) {
+		framebuffer = new Framebuffer(width, height, false, false);
+
+		int framebufferTextureSize;
+		if (Projection.isCubicMode()) {
+			framebufferTextureSize = 4;
+		}else{
+			framebufferTextureSize = 6;
+		}
+
+		for (int i = 0; i < framebufferTextureSize; i++) {
 			framebufferTextures[i] = GL11.glGenTextures();
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, framebufferTextures[i]);
 			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, width,
