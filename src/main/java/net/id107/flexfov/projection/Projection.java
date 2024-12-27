@@ -367,4 +367,8 @@ public abstract class Projection {
 		double displayHeight = MinecraftClient.getInstance().getWindow().getHeight();
 		return getFovX()*displayHeight/displayWidth;
 	}
+
+	public boolean isCubicMode() {
+		return Projection.getProjection() instanceof Cubic;
+	}
 }
