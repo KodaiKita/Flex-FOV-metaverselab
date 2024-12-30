@@ -44,17 +44,15 @@ public abstract class SettingsGui extends Screen {
 			button.active = false;
 		}
 		addButton(button);
-		
-		button = new ButtonWidget(width / 2 - 60, height / 6 - 12, 120, 20,
-				new LiteralText("Flex"), (buttonWidget) -> {
-					currentGui = 1;
-					client.openScreen(new FlexGui(parentScreen));
-				});
-		if (this instanceof FlexGui) {
-			button.active = false;
-		}
-		addButton(button);
-		
+//		button = new ButtonWidget(width / 2 - 60, height / 6 - 12, 120, 20,
+//				new LiteralText("Flex"), (buttonWidget) -> {
+//					currentGui = 1;
+//					client.openScreen(new FlexGui(parentScreen));
+//				});
+//		if (this instanceof FlexGui) {
+//			button.active = false;
+//		}
+//		addButton(button);
 		button = new ButtonWidget(width / 2 + 70, height / 6 - 12, 120, 20,
 				new LiteralText("Advanced"), (buttonWidget) -> {
 					currentGui = 2;

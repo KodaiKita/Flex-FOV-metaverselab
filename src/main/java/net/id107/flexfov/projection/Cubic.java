@@ -21,11 +21,6 @@ public class Cubic extends Projection {
 	}
 	
 	@Override
-	public float[] getBackgroundColor(boolean ignored) {
-		return super.getBackgroundColor(skyBackground);
-	}
-	
-	@Override
 	public double getFovX() {
 		return 360;
 	}

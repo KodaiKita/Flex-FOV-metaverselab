@@ -6,7 +6,6 @@
   "mixins": [
   ],
   "client": [
-    "BackgroundRendererMixin",
     "BillboardParticleMixin",
     "EntityRendererMixin",
     "GameRendererMixin",

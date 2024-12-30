@@ -18,11 +18,11 @@ public class CubicGui extends AdvancedGui {
 	protected void init() {
 		super.init();
 		
-		addButton(new ButtonWidget(width / 2 - 155, height / 6 + 84, 150, 20,
-				new LiteralText("Background Color: " + (Projection.skyBackground ? "Sky" : "Black")), (buttonWidget) -> {
-					Projection.skyBackground = !Projection.skyBackground;
-					buttonWidget.setMessage(new LiteralText("Background Color: " + (Projection.skyBackground ? "Sky" : "Black")));
-					ConfigManager.saveConfig();
-				}));
+//		addButton(new ButtonWidget(width / 2 - 155, height / 6 + 84, 150, 20,
+//				new LiteralText("Background Color: " + (Projection.skyBackground ? "Sky" : "Black")), (buttonWidget) -> {
+//					Projection.skyBackground = !Projection.skyBackground;
+//					buttonWidget.setMessage(new LiteralText("Background Color: " + (Projection.skyBackground ? "Sky" : "Black")));
+//					ConfigManager.saveConfig();
+//				}));
 	}
 }

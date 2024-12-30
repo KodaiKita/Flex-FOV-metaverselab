@@ -15,11 +15,6 @@ public class Fisheye extends Projection {
 	}
 	
 	@Override
-	public float[] getBackgroundColor(boolean ignored) {
-		return super.getBackgroundColor(skyBackground);
-	}
-	
-	@Override
 	public void loadUniforms(float tickDelta) {
 		super.loadUniforms(tickDelta);
 		

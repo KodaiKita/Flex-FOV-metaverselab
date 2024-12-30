@@ -8,11 +8,7 @@ public class Hammer extends Projection {
 	public String getFragmentShader() {
 		return Reader.read("flexfov:shaders/hammer.fs");
 	}
-	
-	@Override
-	public float[] getBackgroundColor(boolean ignored) {
-		return super.getBackgroundColor(skyBackground);
-	}
+
 	
 	@Override
 	public double getFovX() {

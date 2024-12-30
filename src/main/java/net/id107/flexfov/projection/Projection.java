@@ -252,12 +252,9 @@ public abstract class Projection {
 		GL20.glUniform1f(fovyUniform, (float) getFovY());
 		
 		int backgroundUniform = GL20.glGetUniformLocation(shaderProgram, "backgroundColor");
-		float backgroundColor[] = getBackgroundColor(false);
-		if (backgroundColor != null) {
-			GL20.glUniform4f(backgroundUniform, backgroundColor[0], backgroundColor[1], backgroundColor[2], 1);
-		} else {
-			GL20.glUniform4f(backgroundUniform, 0, 0, 0, 1);
-		}
+
+		// Black background
+		GL20.glUniform4f(backgroundUniform, 0, 0, 0, 1);
 		
 		int zoomUniform = GL20.glGetUniformLocation(shaderProgram, "zoom");
 		GL20.glUniform1f(zoomUniform, (float)Math.pow(2, -zoom));
@@ -332,14 +329,6 @@ public abstract class Projection {
 	
 	public int getAntialiasing() {
 		return antialiasing;
-	}
-	
-	public float[] getBackgroundColor(boolean sky) {
-		if (sky) {
-			return new float[] {backgroundRed, backgroundGreen, backgroundBlue};
-		} else {
-			return null;
-		}
 	}
 	
 	public boolean getResizeGui() {
