@@ -2,6 +2,7 @@ package net.id107.flexfov.gui;
 
 import net.id107.flexfov.ConfigManager;
 import net.id107.flexfov.gui.advanced.AdvancedGui;
+import net.id107.flexfov.gui.advanced.CubicGui;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
@@ -26,10 +27,8 @@ public abstract class SettingsGui extends Screen {
 		case 0:
 		default:
 			return new RectilinearGui(parent);
-		case 1:
-			return new FlexGui(parent);
 		case 2:
-			return AdvancedGui.getGui(parent);
+			return new CubicGui(parent);
 		}
 	}
 	
@@ -54,7 +53,7 @@ public abstract class SettingsGui extends Screen {
 //		}
 //		addButton(button);
 		button = new ButtonWidget(width / 2 + 70, height / 6 - 12, 120, 20,
-				new LiteralText("Advanced"), (buttonWidget) -> {
+				new LiteralText("Cubic"), (buttonWidget) -> {
 					currentGui = 2;
 					client.openScreen(AdvancedGui.getGui(parentScreen));
 				});
@@ -62,7 +61,8 @@ public abstract class SettingsGui extends Screen {
 			button.active = false;
 		}
 		addButton(button);
-		
+
+		// DONE button
 		addButton(new ButtonWidget(this.width / 2 - 100, this.height / 6 + 168, 200, 20, ScreenTexts.DONE, (buttonWidget) -> {
 			client.openScreen(parentScreen);
 		}));
