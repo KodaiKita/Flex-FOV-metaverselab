@@ -23,10 +23,6 @@ public abstract class Projection {
 	
 	private static Projection currentProjection;
 	protected static ShaderManager shader = new ShaderManager();
-
-	public static float backgroundRed;
-	public static float backgroundGreen;
-	public static float backgroundBlue;
 	
 	public static double fov = 140f;
 	public static int antialiasing = 16;
