@@ -15,12 +15,15 @@ import net.minecraft.util.math.Vec3d;
 
 @Mixin(EntityRenderer.class)
 public class EntityRendererMixin {
+	// ネームタグ関連の処理っぽいが、消してもそんなに問題なさそうで、正直何をしてるかわからん
 
 	private Entity currentEntity;
 	
 	@ModifyVariable(method = "renderLabelIfPresent(Lnet/minecraft/entity/Entity;Lnet/minecraft/text/Text;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
 			at = @At(value = "HEAD"))
 	private Entity getEntity(Entity entity) {
+		// ネームタグが描画されているときに呼ばれる
+//		System.out.println("getEntity called");
 		currentEntity = entity;
 		return entity;
 	}
@@ -29,6 +32,8 @@ public class EntityRendererMixin {
 			at = @At(value = "INVOKE", ordinal = 0,
 			target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lnet/minecraft/util/math/Quaternion;)V"))
 	private MatrixStack rotateNameplatePre(MatrixStack matrixStack) {
+		// ネームタグが描画されているときに呼ばれる
+//		System.out.println("rotateNameplatePre called");
 		if (Projection.getProjection().shouldRotateParticles()) {
 			matrixStack.push();
 		}
@@ -39,6 +44,8 @@ public class EntityRendererMixin {
 			at = @At(value = "INVOKE", ordinal = 0,
 			target = "Lnet/minecraft/client/util/math/MatrixStack;scale(FFF)V"))
 	private MatrixStack rotateNameplate(MatrixStack matrixStack) {
+		// ネームタグが描画されているときに呼ばれる
+//		System.out.println("rotateNameplate called");
 		if (Projection.getProjection().shouldRotateParticles()) {
 			matrixStack.pop();
 			MinecraftClient mc = MinecraftClient.getInstance();

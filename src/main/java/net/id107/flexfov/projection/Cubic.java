@@ -32,6 +32,7 @@ public class Cubic extends Projection {
 
 	@Override
 	public void rotateCamera(MatrixStack matrixStack) {
+		System.out.println("rotateCamera called: renderPass = " + renderPass);
 		Matrix4f matrix;
 		switch (renderPass) {
 			case 0:
@@ -80,7 +81,7 @@ public class Cubic extends Projection {
 			screenWidth = displayWidth;
 			screenHeight = displayHeight;
 		}
-
+		// 正面以外のブロック?
 		if (Math.max(getFovX(), getFovY()) > 90 || zoom < 0) {
 			for (renderPass = 1; renderPass < 4; renderPass++) {
 				GL11.glViewport(0, 0, displayWidth, displayHeight);
@@ -89,6 +90,7 @@ public class Cubic extends Projection {
 				saveRenderPass();
 			}
 		}
+		// 正面のブロック?
 		renderPass = 0;
 		GL11.glViewport(0, 0, displayWidth, displayHeight);
 		mc.worldRenderer.scheduleTerrainUpdate();

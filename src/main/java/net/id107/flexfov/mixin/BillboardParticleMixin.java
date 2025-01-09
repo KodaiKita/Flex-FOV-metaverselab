@@ -20,12 +20,14 @@ public abstract class BillboardParticleMixin extends Particle {
 	protected BillboardParticleMixin(ClientWorld world, double x, double y, double z) {
 		super(world, x, y, z);
 	}
-
+	// おそらくパーティクル関連の何か, 消しても一応動作する
 	@ModifyVariable(method = "buildGeometry(Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/client/render/Camera;F)V",
 			ordinal = 0,
 			at = @At(value = "INVOKE_ASSIGN", ordinal = 0,
 					target = "Lnet/minecraft/client/render/Camera;getRotation()Lnet/minecraft/util/math/Quaternion;"))
 	private Quaternion rotateParticle(Quaternion quaternion) {
+		// 画面レンダリング時とんでもない回数(重くなるくらい)呼ばれる
+//		System.out.println("rotateParticle called");
 		if (Projection.getProjection().shouldRotateParticles()) {
 			MinecraftClient mc = MinecraftClient.getInstance();
 			Entity camera = mc.cameraEntity;
