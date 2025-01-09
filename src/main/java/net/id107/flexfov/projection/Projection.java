@@ -89,13 +89,6 @@ public abstract class Projection {
 				mc.gameRenderer.renderWorld(tickDelta, startTime, new MatrixStack());
 				saveRenderPass();
 			}
-			if (Math.max(getFovX(), getFovY()) > 250 || zoom < 0) {
-				renderPass = 5;
-				GL11.glViewport(0, 0, displayWidth, displayHeight);
-				mc.worldRenderer.scheduleTerrainUpdate();
-				mc.gameRenderer.renderWorld(tickDelta, startTime, new MatrixStack());
-				saveRenderPass();
-			}
 		}
 		renderPass = 0;
 		GL11.glViewport(0, 0, displayWidth, displayHeight);
