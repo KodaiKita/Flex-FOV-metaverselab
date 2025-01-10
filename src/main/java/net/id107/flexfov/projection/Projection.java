@@ -224,21 +224,17 @@ public abstract class Projection {
 		
 		int texUniform = GL20.glGetUniformLocation(shaderProgram, "texFront");
 		GL20.glUniform1i(texUniform, 0);
-		texUniform = GL20.glGetUniformLocation(shaderProgram, "texBack");
-		GL20.glUniform1i(texUniform, 5);
-		texUniform = GL20.glGetUniformLocation(shaderProgram, "texLeft");
-		GL20.glUniform1i(texUniform, 2);
 		texUniform = GL20.glGetUniformLocation(shaderProgram, "texRight");
 		GL20.glUniform1i(texUniform, 1);
-		texUniform = GL20.glGetUniformLocation(shaderProgram, "texTop");
-		GL20.glUniform1i(texUniform, 4);
+		texUniform = GL20.glGetUniformLocation(shaderProgram, "texLeft");
+		GL20.glUniform1i(texUniform, 2);
 		texUniform = GL20.glGetUniformLocation(shaderProgram, "texBottom");
 		GL20.glUniform1i(texUniform, 3);
 		
-		int fovxUniform = GL20.glGetUniformLocation(shaderProgram, "fovx");
-		GL20.glUniform1f(fovxUniform, (float) getFovX());
-		int fovyUniform = GL20.glGetUniformLocation(shaderProgram, "fovy");
-		GL20.glUniform1f(fovyUniform, (float) getFovY());
+//		int fovxUniform = GL20.glGetUniformLocation(shaderProgram, "fovx");
+//		GL20.glUniform1f(fovxUniform, (float) getFovX());
+//		int fovyUniform = GL20.glGetUniformLocation(shaderProgram, "fovy");
+//		GL20.glUniform1f(fovyUniform, (float) getFovY());
 		
 		int backgroundUniform = GL20.glGetUniformLocation(shaderProgram, "backgroundColor");
 
@@ -273,7 +269,12 @@ public abstract class Projection {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glPushMatrix();
 		GL11.glLoadIdentity();
-		
+
+		// bind framebuffer textures to shader texture units
+		// GL_TEXTURE0 - front
+		// GL_TEXTURE1 - right
+		// GL_TEXTURE2 - left
+		// GL_TEXTURE3 - bottom
 		for (int i = 0; i < BufferManager.framebufferTextures.length; i++) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0+i);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, BufferManager.framebufferTextures[i]);
