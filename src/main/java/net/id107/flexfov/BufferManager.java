@@ -12,7 +12,7 @@ import net.minecraft.client.util.Window;
 public class BufferManager {
 
 	private static Framebuffer framebuffer;
-	public static int[] framebufferTextures = new int[6];
+	public static int[] framebufferTextures = new int[4];
 	
 	private static float minX;
 	private static float maxX;
@@ -43,13 +43,8 @@ public class BufferManager {
 		framebuffer = new Framebuffer(width, height, false, false);
 
 		int framebufferTextureSize;
-		if (Projection.isCubicMode()) {
-			framebufferTextureSize = 4;
-		}else{
-			framebufferTextureSize = 6;
-		}
 
-		for (int i = 0; i < framebufferTextureSize; i++) {
+		for (int i = 0; i < framebufferTextures.length; i++) {
 			framebufferTextures[i] = GL11.glGenTextures();
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, framebufferTextures[i]);
 			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, width,
@@ -62,7 +57,7 @@ public class BufferManager {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		
 		float aspectRatio = (float)window.getWidth()/(float)window.getHeight();
-		
+		float targetFov = 90f;
 		if (aspectRatio >= 1) {
 			minY = 0;
 			maxY = 1;
@@ -70,7 +65,7 @@ public class BufferManager {
 			minX = 0.5f - 0.5f/aspectRatio;
 			maxX = 0.5f + 0.5f/aspectRatio;
 			
-			fov = 90f;
+			fov = targetFov;
 		} else {
 			minX = 0;
 			maxX = 1;
@@ -78,7 +73,7 @@ public class BufferManager {
 			minY = 0.5f - 0.5f*aspectRatio;
 			maxY = 0.5f + 0.5f*aspectRatio;
 			
-			fov = (float) Math.toDegrees(2*Math.atan(Math.tan(Math.toRadians(90f/2))/aspectRatio));
+			fov = (float) Math.toDegrees(2*Math.atan(Math.tan(Math.toRadians(targetFov/2))/aspectRatio));
 		}
 		
 		displayWidth = window.getWidth();
