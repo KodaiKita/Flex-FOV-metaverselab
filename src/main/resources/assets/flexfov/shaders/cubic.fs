@@ -11,7 +11,7 @@ uniform sampler2D texRight;
 // uniform sampler2D texTop;
 uniform sampler2D texBottom;
 
-uniform int antialiasing;
+// uniform int antialiasing;
 
 uniform vec2 pixelOffset[16];
 
@@ -31,6 +31,8 @@ float normalizeCoordinate(float value, vec2 range) {
 void main(void) {
 	//Anti-aliasing
 	vec4 colorN[16];
+
+	// The ratios of the sides of the cube
 	float heightRatio = 2.714;
     float widthRatio  = 5.841;
     float depthRatio  = 7.298;
@@ -51,6 +53,9 @@ void main(void) {
 //             gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
 //             return;
 //         }
+
+        // Minecraft の画面内で, 左下が coord = (-1, -1), 右上が coord = (1, 1) になる
+        // texture2D
 
         // Left, Front, Right
         vec2 yRange = vec2(1.0 - (2.0*heightRatio/(heightRatio+depthRatio)), 1.0);
