@@ -89,6 +89,7 @@ public class Cubic extends Projection {
 				GL11.glViewport(0, 0, displayWidth, displayHeight);
 				mc.worldRenderer.scheduleTerrainUpdate();
 				mc.gameRenderer.renderWorld(tickDelta, startTime, new MatrixStack());
+				System.out.println("いや、呼ばれとるわ！renderPass = " + renderPass);
 				saveRenderPass();
 			}
 		}
@@ -137,19 +138,11 @@ public class Cubic extends Projection {
 		texUniform = GL20.glGetUniformLocation(shaderProgram, "texBottom");
 		GL20.glUniform1i(texUniform, 3);
 
-		int fovxUniform = GL20.glGetUniformLocation(shaderProgram, "fovx");
-		GL20.glUniform1f(fovxUniform, (float) getFovX());
-
-		int fovyUniform = GL20.glGetUniformLocation(shaderProgram, "fovy");
-		GL20.glUniform1f(fovyUniform, (float) getFovY());
 
 		int backgroundUniform = GL20.glGetUniformLocation(shaderProgram, "backgroundColor");
-
 		// Black background
 		GL20.glUniform4f(backgroundUniform, 0, 0, 0, 1);
 
-		int zoomUniform = GL20.glGetUniformLocation(shaderProgram, "zoom");
-		GL20.glUniform1f(zoomUniform, (float)Math.pow(2, -zoom));
 
 		int drawCursorUniform = GL20.glGetUniformLocation(shaderProgram, "drawCursor");
 		GL20.glUniform1i(drawCursorUniform, (getResizeGui() && mc.currentScreen != null) ? 1 : 0);
