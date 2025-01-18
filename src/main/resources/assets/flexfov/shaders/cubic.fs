@@ -3,12 +3,12 @@
 /* This comes interpolated from the vertex shader */
 varying vec2 texcoord;
 
-/* The 4 textures to be rendered */
+/* The 6 textures to be rendered */
 uniform sampler2D texFront;
-// uniform sampler2D texBack;
+uniform sampler2D texBack;
 uniform sampler2D texLeft;
 uniform sampler2D texRight;
-// uniform sampler2D texTop;
+uniform sampler2D texTop;
 uniform sampler2D texBottom;
 
 // uniform int antialiasing;
@@ -21,10 +21,18 @@ uniform vec2 cursorPos;
 
 uniform bool drawCursor;
 
+// Range 内のvalue を 0.0 ~ 1.0 に丸める
 float normalizeCoordinate(float value, vec2 range) {
     float min = range.x;
     float max = range.y;
     return (value - min) / (max - min);
+}
+
+// 0.0 ~ 1.0 の value を Range 内に丸める
+float customizeCoordinate(float value, vec2 range) {
+    float min = range.x;
+    float max = range.y;
+    return value * (max - min) + min;
 }
 
 
@@ -57,42 +65,81 @@ void main(void) {
         // Minecraft の画面内で, 左下が coord = (-1, -1), 右上が coord = (1, 1) になる
         // texture2D
 
-        // Left, Front, Right
+
         vec2 yRange = vec2(1.0 - (2.0*heightRatio/(heightRatio+depthRatio)), 1.0);
 
         vec2 xRangeBottom = vec2(-1.0 + depthRatio*2.0/(depthRatio*2.0+widthRatio), -1.0 + (depthRatio+widthRatio)*2.0/(depthRatio*2.0+widthRatio));
         vec2 yRangeBottom = vec2(yRange[0] - 2.0*depthRatio/(heightRatio+depthRatio) , yRange[0]);
+        // Left, Front, Right
         if (yRange[0] <= coord.y && coord.y <= yRange[1]) {
-            // Left
+
+
             vec2 xRange = vec2(-1.0,
                                -1.0 + depthRatio*2.0/(depthRatio*2.0+widthRatio));
+            // Left
             if (xRange[0] < coord.x && coord.x <= xRange[1]) {
+                float normalX = normalizeCoordinate(coord.x, xRange);
+                float normalY = normalizeCoordinate(coord.y, yRange);
 
-                colorN[loop] = vec4(texture2D(texLeft, vec2(normalizeCoordinate(coord.x, xRange),
-                                                            normalizeCoordinate(coord.y, yRange)
-                                   )).rgb, 1.0);
+                vec3 destination3D = vec3(customizeCoordinate(normalX, vec2(-depthRatio/2, depthRatio/2)),
+                                          -widthRatio/2,
+                                          customizeCoordinate(normalY, vec2(-heightRatio/2, heightRatio/2)));
+                colorN[loop] = vec4(texture2D(texLeft, vec2(normalX, normalY)).rgb, 1.0);
             }
-            // Front
+
             xRange = vec2(xRange[1],
                           -1.0 + (depthRatio+widthRatio)*2.0/(depthRatio*2.0+widthRatio));
+            // Front
             if (xRange[0] < coord.x && coord.x <= xRange[1]) {
+                float normalX = normalizeCoordinate(coord.x, xRange);
+                float normalY = normalizeCoordinate(coord.y, yRange);
 
-                colorN[loop] = vec4(texture2D(texFront, vec2(normalizeCoordinate(coord.x, xRange),
-                                                             normalizeCoordinate(coord.y, yRange)
-                                   )).rgb, 1.0);
+                vec3 destination3D = vec3(depthRatio/2,
+                                          customizeCoordinate(normalX, vec2(-widthRatio/2, widthRatio/2)),
+                                          customizeCoordinate(normalY, vec2(-heightRatio/2, heightRatio/2)));
+                // (0, 0, 0) から destination3D までの線分が
+                // 面 Front x = height/2, -height/2 <= y <= height/2 , -height/2 <= z <= height/2 と交差するかどうかを判定する
+
+                // x成分からパラメータを計算
+                float t = (height/2) / destination3D.x;
+
+                // パラメータが 0 <= t <= 1 ならば交差する
+                if (0 <= t && t <= 1) {
+                    // 交差した点の3次元座標を計算
+                    vec3 intersect = vec3(height/2, destination3D.y * t, destination3D.z * t);
+                    // 交差した点が面の範囲内にあるかどうかを判定
+                    if (-height/2 <= intersect.y && intersect.y <= height/2 &&
+                        -height/2 <= intersect.z && intersect.z <= height/2) {
+                        // 交差した点の色をテクスチャ座標に変換
+                        normalY = normalizeCoordinate(intersect.z, vec2(-height/2, height/2));
+                        normalX = normalizeCoordinate(intersect.y, vec2(-height/2, height/2));
+
+                    }
+                }
+
+                colorN[loop] = vec4(texture2D(texFront, vec2(normalX, normalY)).rgb, 1.0);
             }
             // Right
             xRange = vec2(xRange[1], 1.0);
             if (xRange[0] < coord.x && coord.x <= xRange[1]) {
+                float normalX = normalizeCoordinate(coord.x, xRange);
+                float normalY = normalizeCoordinate(coord.y, yRange);
 
-                colorN[loop] = vec4(texture2D(texRight, vec2(normalizeCoordinate(coord.x, xRange),
-                                                             normalizeCoordinate(coord.y, yRange)
-                                   )).rgb, 1.0);
+                vec3 destination3D = vec3(customizeCoordinate(normalX, vec2(-depthRatio/2, depthRatio/2)),
+                                          widthRatio/2,
+                                          customizeCoordinate(normalY, vec2(-heightRatio/2, heightRatio/2)));
+                colorN[loop] = vec4(texture2D(texRight, vec2(normalX, normalY)).rgb, 1.0);
             }
+        // Bottom
         }else if (yRangeBottom[0] <= coord.y && coord.y <= yRangeBottom[1] && xRangeBottom[0] <= coord.x && coord.x <= xRangeBottom[1]) {
-            colorN[loop] = vec4(texture2D(texBottom, vec2(normalizeCoordinate(coord.x, xRangeBottom),
-                                                         normalizeCoordinate(coord.y, yRangeBottom)
-                               )).rgb, 1.0);
+            float normalX = normalizeCoordinate(coord.x, xRangeBottom);
+            float normalY = normalizeCoordinate(coord.y, yRangeBottom);
+
+            vec3 destination3D = vec3(customizeCoordinate(normalY, vec2(-depthRatio/2, depthRatio/2)),
+                                      customizeCoordinate(normalX, vec2(-widthRatio/2, widthRatio/2)),
+                                      heightRatio/2);
+
+            colorN[loop] = vec4(texture2D(texBottom, vec2(normalX, normalY)).rgb, 1.0);
         }else {
             gl_FragColor = backgroundColor;
             return;
