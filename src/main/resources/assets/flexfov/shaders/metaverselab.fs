@@ -55,13 +55,14 @@ float customizeCoordinate(float value, vec2 range) {
 
 // 3D 空間は 左手系
 // Cube の中心は (0,0,0) で辺の長さは RATIO_HEIGHT
-// Cube の 各面と, (0,0,0) から destination3D までの線分 の交差点を返す
-// 交差しない場合は (0, 0, 0) を返す
+// Cube の 無限に広がる各面と, (0,0,0) から destination3D までの線分 の交差点を返す
+// 交差しない場合は (NaN, 0, 0) を返す
 
-// TODO: 交差しない場合、交差しない情報だけでなく、どちらに交差点がずれているかも返す
-vec3 getIntersectionPoint(int targetFace, vec3 destination3D) {
+
+vec3 getIntersectionPoint(int targetFace, vec3 destination3D, out bool isIntersected) {
     vec3 intersection;
-    vec3 nullVec = vec3(0.0, 0.0, 0.0);
+    vec3 nullVec = vec3(NaN, NaN, NaN);
+    isIntersected = false;
     switch(targetFace) {
         case ID_FRONT:
             float x = height/2;
@@ -69,44 +70,90 @@ vec3 getIntersectionPoint(int targetFace, vec3 destination3D) {
             if (t < 0.0 || t > 1.0) return nullVec;
             float y = destination3D.y * t;
             float z = destination3D.z * t;
-            if (-height/2 <= y && y <= height/2 && -height/2 <= z && z <= height/2) return vec3(x, y, z);
+            if (-height/2 <= y && y <= height/2 && -height/2 <= z && z <= height/2) isIntersected = true;
+            return vec3(x, y, z);
         case ID_LEFT:
             float y = -width/2;
             float t = y / destination3D.y;
             if (t < 0.0 || t > 1.0) return nullVec;
             float x = destination3D.x * t;
             float z = destination3D.z * t;
-            if (-height/2 <= x && x <= height/2 && -height/2 <= z && z <= height/2) return vec3(x, y, z);
+            if (-height/2 <= x && x <= height/2 && -height/2 <= z && z <= height/2) isIntersected = true;
+            return vec3(x, y, z);
         case ID_RIGHT:
             float y = width/2;
             float t = y / destination3D.y;
             if (t < 0.0 || t > 1.0) return nullVec;
             float x = destination3D.x * t;
             float z = destination3D.z * t;
-            if (-height/2 <= x && x <= height/2 && -height/2 <= z && z <= height/2) return vec3(x, y, z);
+            if (-height/2 <= x && x <= height/2 && -height/2 <= z && z <= height/2) isIntersected = true;
+            return vec3(x, y, z);
         case ID_ROOF:
             float z = height/2;
             float t = z / destination3D.z;
             if (t < 0.0 || t > 1.0) return nullVec;
             float x = destination3D.x * t;
             float y = destination3D.y * t;
-            if (-height/2 <= x && x <= height/2 && -height/2 <= y && y <= height/2) return vec3(x, y, z);
+            if (-height/2 <= x && x <= height/2 && -height/2 <= y && y <= height/2) isIntersected = true;
+            return vec3(x, y, z);
         case ID_FLOOR:
             float z = -height/2;
             float t = z / destination3D.z;
             if (t < 0.0 || t > 1.0) return nullVec;
             float x = destination3D.x * t;
             float y = destination3D.y * t;
-            if (-height/2 <= x && x <= height/2 && -height/2 <= y && y <= height/2) return vec3(x, y, z);
+            if (-height/2 <= x && x <= height/2 && -height/2 <= y && y <= height/2) isIntersected = true;
+            return vec3(x, y, z);
         case ID_BACK:
             float x = -height/2;
             float t = x / destination3D.x;
             if (t < 0.0 || t > 1.0) return nullVec;
             float y = destination3D.y * t;
             float z = destination3D.z * t;
-            if (-height/2 <= y && y <= height/2 && -height/2 <= z && z <= height/2) return vec3(x, y, z);
+            if (-height/2 <= y && y <= height/2 && -height/2 <= z && z <= height/2) isIntersected = true;
+            return vec3(x, y, z);
     }
     return nullVec;
+}
+
+// テクスチャ座標を 3D 空間の座標に変換する
+// TODO: 未完成なのでこの関数を完成させる
+vec3 convertTextureCoordinateTo3D(int targetFace, vec2 textureCoordinate) {
+    switch(targetFace) {
+        case ID_FRONT:
+        case ID_LEFT:
+        case ID_RIGHT:
+        case ID_ROOF:
+        case ID_FLOOR:
+        case ID_BACK:
+    }
+    return vec3(0.0, 0.0, 0.0);
+}
+
+// TODO: 変換が間違っている箇所があるので修正する
+// 正しい交差点をその面のテクスチャ座標に変換する
+vec2 convert3DToTextureCoordinate(int targetFace, vec3 positionOnCubeFace3D) {
+    switch(targetFace) {
+        case ID_FRONT:
+            return vec2(normalizeCoordinate(positionOnCubeFace3D.y, vec2(-height/2, height/2)),
+                        normalizeCoordinate(positionOnCubeFace3D.z, vec2(-height/2, height/2)));
+        case ID_LEFT:
+            return vec2(normalizeCoordinate(positionOnCubeFace3D.x, vec2(-height/2, height/2)),
+                        normalizeCoordinate(positionOnCubeFace3D.z, vec2(-height/2, height/2)));
+        case ID_RIGHT:
+            return vec2(1 - normalizeCoordinate(positionOnCubeFace3D.x, vec2(-height/2, height/2)),
+                        normalizeCoordinate(positionOnCubeFace3D.z, vec2(-height/2, height/2)));
+        case ID_ROOF:
+            return vec2(1 - normalizeCoordinate(positionOnCubeFace3D.y, vec2(-height/2, height/2)),
+                        1 - normalizeCoordinate(positionOnCubeFace3D.x, vec2(-height/2, height/2)));
+        case ID_FLOOR:
+            return vec2(normalizeCoordinate(positionOnCubeFace3D.y, vec2(-height/2, height/2)),
+                        1 - normalizeCoordinate(positionOnCubeFace3D.x, vec2(-height/2, height/2)));
+        case ID_BACK:
+            return vec2(normalizeCoordinate(positionOnCubeFace3D.y, vec2(-height/2, height/2)),
+                        normalizeCoordinate(positionOnCubeFace3D.z, vec2(-height/2, height/2)));
+    }
+    return textureCoordinate;
 }
 
 void main(void) {
@@ -128,7 +175,9 @@ void main(void) {
 
     // 3D空間 での座標
     vec3 destination3D;
-    
+
+    // TODO: このあたりのTexture座標から3D座標に変換する処理が間違っている気がするので確認する
+    // TODO: このあたりの処理を関数にまとめる (convertTextureCoordinateTo3D)
     if (yRangeTop[0] <= texcoord.y && texcoord.y <= yRangeTop[1]) {
         // マイクラ画面上で Left, Front, Right のいずれか
         if (xRangeLeft[0] < texcoord.x && texcoord.x <= xRangeLeft[1]) {
@@ -169,8 +218,24 @@ void main(void) {
     // Cube のどの面のピクセルを持ってくるか計算する
 
     // とりあえず同じ面との交差点を求める
-    vec3 intersectionWithSameFace = getIntersectionPoint(destinationFace, destination3D);
-    // 交差しない場合は相対的に右の面を試す
-    if (intersectionWithSameFace == vec3(0.0, 0.0, 0.0)) {
+    bool isIntersected;
+    vec3 intersectionWithSameFace = getIntersectionPoint(destinationFace, destination3D, isIntersected);
+
+    if(isIntersected){
+        // TODO: 交差点をテクスチャ座標に変換してからピクセルデータをとってくる
+
+    }
+
+    // 他の面を試す
+    for (int i=ID_FRONT; i < ID_BACK; i++) {
+        if (i == destinationFace) continue;
+        bool isIntersected;
+        vec3 intersection = getIntersectionPoint(i, destination3D, isIntersected);
+
+        if (isIntersected) {
+            // TODO: 交差点をテクスチャ座標に変換してからピクセルデータをとってくる
+
+            break;
+        }
     }
 }
