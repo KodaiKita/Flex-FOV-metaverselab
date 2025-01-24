@@ -31,6 +31,16 @@ const int ID_ROOF  = 3;
 const int ID_FLOOR = 4;
 const int ID_BACK  = 5;
 
+const vec2 METAVERSE_LAB_RANGE_X = vec2(-RATIO_DEPTH/2.0, RATIO_DEPTH/2.0);
+const vec2 METAVERSE_LAB_RANGE_Y = vec2(-RATIO_WIDTH/2.0, RATIO_WIDTH/2.0);
+const vec2 METAVERSE_LAB_RANGE_Z = vec2(-RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0);
+
+const float METALAB_FRONT_COORD_X = RATIO_DEPTH/2.0;
+const float METALAB_LEFT_COORD_Y = -RATIO_WIDTH/2.0;
+const float METALAB_RIGHT_COORD_Y = RATIO_WIDTH/2.0;
+const float METALAB_ROOF_COORD_Z = RATIO_HEIGHT/2.0;
+const float METALAB_FLOOR_COORD_Z = -RATIO_HEIGHT/2.0;
+const float METALAB_BACK_COORD_X = -RATIO_DEPTH/2.0;
 
 // Range.x ~ Range.y 内のvalue を 0.0 ~ 1.0 に丸める
 float normalizeCoordinate(float value, vec2 range) {
@@ -117,18 +127,27 @@ vec3 getIntersectionPoint(int targetFace, vec3 destination3D, out bool isInterse
     return nullVec;
 }
 
-// テクスチャ座標を 3D 空間の座標に変換する
-// TODO: 未完成なのでこの関数を完成させる
+// メタバースラボ面のテクスチャ座標を 3D 空間の座標に変換する
 vec3 convertTextureCoordinateTo3D(int targetFace, vec2 textureCoordinate) {
     switch(targetFace) {
         case ID_FRONT:
+            float y = customizeCoordinate(textureCoordinate.x, METAVERSE_LAB_RANGE_X);
+            float z = customizeCoordinate(textureCoordinate.y, METAVERSE_LAB_RANGE_Z);
+            return vec3(METALAB_FRONT_COORD_X, y, z);
         case ID_LEFT:
+            float x = customizeCoordinate(textureCoordinate.x, METAVERSE_LAB_RANGE_X);
+            float z = customizeCoordinate(textureCoordinate.y, METAVERSE_LAB_RANGE_Z);
+            return vec3(x, METALAB_LEFT_COORD_Y, z);
         case ID_RIGHT:
-        case ID_ROOF:
+            float x = customizeCoordinate(1.0-textureCoordinate.x, METAVERSE_LAB_RANGE_X);
+            float z = customizeCoordinate(textureCoordinate.y, METAVERSE_LAB_RANGE_Z);
+            return vec3(x, METALAB_RIGHT_COORD_Y, z);
         case ID_FLOOR:
-        case ID_BACK:
+            float y = customizeCoordinate(textureCoordinate.x, METAVERSE_LAB_RANGE_Y);
+            float x = customizeCoordinate(1.0-textureCoordinate.y, METAVERSE_LAB_RANGE_X);
+            return vec3(x, y, METALAB_FLOOR_COORD_Z);
     }
-    return vec3(0.0, 0.0, 0.0);
+    return vec3(NaN, NaN, NaN);
 }
 
 // TODO: 変換が間違っている箇所があるので修正する
