@@ -23,15 +23,16 @@ const float RATIO_HEIGHT = 2.714;
 const float RATIO_WIDTH  = 5.841;
 const float RATIO_DEPTH  = 7.298;
 
+// Cube , メタバースラボ の各面のID (方向共通)
 const int ID_FRONT = 0;
-const int ID_LEFT = 1;
+const int ID_LEFT  = 1;
 const int ID_RIGHT = 2;
-const int ID_ROOF = 3;
+const int ID_ROOF  = 3;
 const int ID_FLOOR = 4;
-const int ID_BACK = 5;
+const int ID_BACK  = 5;
 
 
-// Range 内のvalue を 0.0 ~ 1.0 に丸める
+// Range.x ~ Range.y 内のvalue を 0.0 ~ 1.0 に丸める
 float normalizeCoordinate(float value, vec2 range) {
     float min = range.x;
     float max = range.y;
@@ -46,7 +47,7 @@ vec2 normalizeCoordinate(vec2 target, vec2 range) {
     return normalizeCoordinate(target, range, range);
 }
 
-// 0.0 ~ 1.0 の value を Range 内に丸める
+// 0.0 ~ 1.0 の value を Range.x ~ Range.y 内に丸める
 float customizeCoordinate(float value, vec2 range) {
     float min = range.x;
     float max = range.y;
@@ -57,7 +58,7 @@ float customizeCoordinate(float value, vec2 range) {
 // Cube の中心は (0,0,0) で辺の長さは RATIO_HEIGHT
 // Cube の 無限に広がる各面と, (0,0,0) から destination3D までの線分 の交差点を返す
 // 交差しない場合は (NaN, 0, 0) を返す
-
+// Cube の面と交差する場合は isIntersected を true にする
 
 vec3 getIntersectionPoint(int targetFace, vec3 destination3D, out bool isIntersected) {
     vec3 intersection;
@@ -178,39 +179,35 @@ void main(void) {
 
     // TODO: このあたりのTexture座標から3D座標に変換する処理が間違っている気がするので確認する
     // TODO: このあたりの処理を関数にまとめる (convertTextureCoordinateTo3D)
-    if (yRangeTop[0] <= texcoord.y && texcoord.y <= yRangeTop[1]) {
-        // マイクラ画面上で Left, Front, Right のいずれか
-        if (xRangeLeft[0] < texcoord.x && texcoord.x <= xRangeLeft[1]) {
-            // Left
+    if (yRangeTop[0] <= texcoord.y && texcoord.y <= yRangeTop[1]) {// マイクラ画面上で Left, Front, Right のいずれか
+        if (xRangeLeft[0] < texcoord.x && texcoord.x <= xRangeLeft[1]) {// Left
+            convertTextureCoordinateTo3D(ID_LEFT, texcoord);
             destinationFace = ID_LEFT;
             normalCoord = vec2(normalizeCoordinate(texcoord, xRangeLeft, yRangeTop));
             destination3D = vec3(customizeCoordinate(normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
                                  -RATIO_WIDTH,
                                  customizeCoordinate(normalCoord.x, -RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0));
-        }else if(xRangeFront[0] < texcoord.x && texcoord.x <= xRangeFront[1]){
-            // Front
+        }else if(xRangeFront[0] < texcoord.x && texcoord.x <= xRangeFront[1]){// Front
             destinationFace = ID_FRONT;
             normalCoord = vec2(normalizeCoordinate(texcoord, xRangeFront, yRangeTop));
             destination3D = vec3(RATIO_DEPTH/2.0,
                                  customizeCoordinate(normalCoord.x, -RATIO_WIDTH/2.0, RATIO_WIDTH/2.0),
                                  customizeCoordinate(normalCoord.y, -RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0));
-        }else{
-            // Right
+        }else{// Right
             destinationFace = ID_RIGHT;
             normalCoord = vec2(normalizeCoordinate(texcoord, xRangeRight, yRangeTop));
             destination3D = vec3(customizeCoordinate(1.0-normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
                                  RATIO_WIDTH/2.0,
                                  customizeCoordinate(normalCoord.x, -RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0));
         }
-    }else if(yRangeBottom[0] <= texcoord.y && texcoord.y <= yRangeBottom[1] && xRangeBottom[0] <= texcoord.x && texcoord.x <= xRangeBottom[1]){
-        // マイクラ画面下で Bottom
+    }else if(yRangeBottom[0] <= texcoord.y && texcoord.y <= yRangeBottom[1] &&
+             xRangeBottom[0] <= texcoord.x && texcoord.x <= xRangeBottom[1]){// マイクラ画面下で Bottom
         destinationFace = ID_FLOOR;
         normalCoord = vec2(normalizeCoordinate(texcoord, xRangeBottom, yRangeBottom));
         destination3D = vec3(customizeCoordinate(1.0-normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
                              customizeCoordinate(normalCoord.x, -RATIO_WIDTH/2.0, RATIO_WIDTH/2.0),
                              -RATIO_HEIGHT/2.0);
-    }else{
-        // 範囲外
+    }else{// 範囲外
         gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
         return;
     }
