@@ -42,6 +42,8 @@ const float METALAB_ROOF_COORD_Z = RATIO_HEIGHT/2.0;
 const float METALAB_FLOOR_COORD_Z = -RATIO_HEIGHT/2.0;
 const float METALAB_BACK_COORD_X = -RATIO_DEPTH/2.0;
 
+const vec2 CUBE_RANGE_XYZ = vec2(-RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0);
+
 // Range.x ~ Range.y 内のvalue を 0.0 ~ 1.0 に丸める
 float normalizeCoordinate(float value, vec2 range) {
     float min = range.x;
@@ -150,30 +152,35 @@ vec3 convertTextureCoordinateTo3D(int targetFace, vec2 textureCoordinate) {
     return vec3(NaN, NaN, NaN);
 }
 
-// TODO: 変換が間違っている箇所があるので修正する
 // 正しい交差点をその面のテクスチャ座標に変換する
 vec2 convert3DToTextureCoordinate(int targetFace, vec3 positionOnCubeFace3D) {
     switch(targetFace) {
         case ID_FRONT:
-            return vec2(normalizeCoordinate(positionOnCubeFace3D.y, vec2(-height/2, height/2)),
-                        normalizeCoordinate(positionOnCubeFace3D.z, vec2(-height/2, height/2)));
+            float x = normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
+            float y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
+            return vec2(x, y);
         case ID_LEFT:
-            return vec2(normalizeCoordinate(positionOnCubeFace3D.x, vec2(-height/2, height/2)),
-                        normalizeCoordinate(positionOnCubeFace3D.z, vec2(-height/2, height/2)));
+            float x = normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
+            float y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
+            return vec2(x, y);
         case ID_RIGHT:
-            return vec2(1 - normalizeCoordinate(positionOnCubeFace3D.x, vec2(-height/2, height/2)),
-                        normalizeCoordinate(positionOnCubeFace3D.z, vec2(-height/2, height/2)));
+            float x = 1 - normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
+            float y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
+            return vec2(x, y);
         case ID_ROOF:
-            return vec2(1 - normalizeCoordinate(positionOnCubeFace3D.y, vec2(-height/2, height/2)),
-                        1 - normalizeCoordinate(positionOnCubeFace3D.x, vec2(-height/2, height/2)));
+            float x = normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
+            float y = normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
+            return vec2(x, y);
         case ID_FLOOR:
-            return vec2(normalizeCoordinate(positionOnCubeFace3D.y, vec2(-height/2, height/2)),
-                        1 - normalizeCoordinate(positionOnCubeFace3D.x, vec2(-height/2, height/2)));
+            float x = normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
+            float y = 1 - normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
+            return vec2(x, y);
         case ID_BACK:
-            return vec2(normalizeCoordinate(positionOnCubeFace3D.y, vec2(-height/2, height/2)),
-                        normalizeCoordinate(positionOnCubeFace3D.z, vec2(-height/2, height/2)));
+            float x = 1 - normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
+            float y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
+            return vec2(x, y);
     }
-    return textureCoordinate;
+    return vec2(NaN, NaN);
 }
 
 void main(void) {
