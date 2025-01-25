@@ -86,52 +86,53 @@ vec3 getIntersectionPoint(int targetFace, vec3 destination3D, out bool isInterse
     vec3 nullVec = vec3(NaN, NaN, NaN);
     isIntersected = false;
     switch(targetFace) {
+        float x, y, z, t;
         case ID_FRONT:
-            float x = RATIO_HEIGHT/2.0;
-            float t = x / destination3D.x;
+            x = RATIO_HEIGHT/2.0;
+            t = x / destination3D.x;
             if (t < 0.0 || t > 1.0) return nullVec;
-            float y = destination3D.y * t;
-            float z = destination3D.z * t;
+            y = destination3D.y * t;
+            z = destination3D.z * t;
             if (-RATIO_HEIGHT/2.0 <= y && y <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= z && z <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_LEFT:
-            float y = -width/2.0;
-            float t = y / destination3D.y;
+            y = -RATIO_WIDTH/2.0;
+            t = y / destination3D.y;
             if (t < 0.0 || t > 1.0) return nullVec;
-            float x = destination3D.x * t;
-            float z = destination3D.z * t;
+            x = destination3D.x * t;
+            z = destination3D.z * t;
             if (-RATIO_HEIGHT/2.0 <= x && x <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= z && z <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_RIGHT:
-            float y = width/2.0;
-            float t = y / destination3D.y;
+            y = RATIO_WIDTH/2.0;
+            t = y / destination3D.y;
             if (t < 0.0 || t > 1.0) return nullVec;
-            float x = destination3D.x * t;
-            float z = destination3D.z * t;
+            x = destination3D.x * t;
+            z = destination3D.z * t;
             if (-RATIO_HEIGHT/2.0 <= x && x <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= z && z <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_ROOF:
-            float z = RATIO_HEIGHT/2.0;
-            float t = z / destination3D.z;
+            z = RATIO_HEIGHT/2.0;
+            t = z / destination3D.z;
             if (t < 0.0 || t > 1.0) return nullVec;
-            float x = destination3D.x * t;
-            float y = destination3D.y * t;
+            x = destination3D.x * t;
+            y = destination3D.y * t;
             if (-RATIO_HEIGHT/2.0 <= x && x <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= y && y <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_FLOOR:
-            float z = -RATIO_HEIGHT/2.0;
-            float t = z / destination3D.z;
+            z = -RATIO_HEIGHT/2.0;
+            t = z / destination3D.z;
             if (t < 0.0 || t > 1.0) return nullVec;
-            float x = destination3D.x * t;
-            float y = destination3D.y * t;
+            x = destination3D.x * t;
+            y = destination3D.y * t;
             if (-RATIO_HEIGHT/2.0 <= x && x <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= y && y <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_BACK:
-            float x = -RATIO_HEIGHT/2.0;
-            float t = x / destination3D.x;
+            x = -RATIO_HEIGHT/2.0;
+            t = x / destination3D.x;
             if (t < 0.0 || t > 1.0) return nullVec;
-            float y = destination3D.y * t;
-            float z = destination3D.z * t;
+            y = destination3D.y * t;
+            z = destination3D.z * t;
             if (-RATIO_HEIGHT/2.0 <= y && y <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= z && z <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
     }
@@ -141,21 +142,22 @@ vec3 getIntersectionPoint(int targetFace, vec3 destination3D, out bool isInterse
 // メタバースラボ面のテクスチャ座標を 3D 空間の座標に変換する
 vec3 convertTextureCoordinateTo3D(int targetFace, vec2 textureCoordinate) {
     switch(targetFace) {
+        float x, y, z;
         case ID_FRONT:
-            float y = customizeCoordinate(textureCoordinate.x, METAVERSE_LAB_RANGE_X);
-            float z = customizeCoordinate(textureCoordinate.y, METAVERSE_LAB_RANGE_Z);
+            y = customizeCoordinate(textureCoordinate.x, METAVERSE_LAB_RANGE_X);
+            z = customizeCoordinate(textureCoordinate.y, METAVERSE_LAB_RANGE_Z);
             return vec3(METALAB_FRONT_COORD_X, y, z);
         case ID_LEFT:
-            float x = customizeCoordinate(textureCoordinate.x, METAVERSE_LAB_RANGE_X);
-            float z = customizeCoordinate(textureCoordinate.y, METAVERSE_LAB_RANGE_Z);
+            x = customizeCoordinate(textureCoordinate.x, METAVERSE_LAB_RANGE_X);
+            z = customizeCoordinate(textureCoordinate.y, METAVERSE_LAB_RANGE_Z);
             return vec3(x, METALAB_LEFT_COORD_Y, z);
         case ID_RIGHT:
-            float x = customizeCoordinate(1.0-textureCoordinate.x, METAVERSE_LAB_RANGE_X);
-            float z = customizeCoordinate(textureCoordinate.y, METAVERSE_LAB_RANGE_Z);
+            x = customizeCoordinate(1.0-textureCoordinate.x, METAVERSE_LAB_RANGE_X);
+            z = customizeCoordinate(textureCoordinate.y, METAVERSE_LAB_RANGE_Z);
             return vec3(x, METALAB_RIGHT_COORD_Y, z);
         case ID_FLOOR:
-            float y = customizeCoordinate(textureCoordinate.x, METAVERSE_LAB_RANGE_Y);
-            float x = customizeCoordinate(1.0-textureCoordinate.y, METAVERSE_LAB_RANGE_X);
+            y = customizeCoordinate(textureCoordinate.x, METAVERSE_LAB_RANGE_Y);
+            x = customizeCoordinate(1.0-textureCoordinate.y, METAVERSE_LAB_RANGE_X);
             return vec3(x, y, METALAB_FLOOR_COORD_Z);
     }
     return vec3(NaN, NaN, NaN);
@@ -164,35 +166,38 @@ vec3 convertTextureCoordinateTo3D(int targetFace, vec2 textureCoordinate) {
 // 正しい交差点をその面のテクスチャ座標に変換する
 vec2 convert3DToTextureCoordinate(int targetFace, vec3 positionOnCubeFace3D) {
     switch(targetFace) {
+        float x, y;
         case ID_FRONT:
-            float x = normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
-            float y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
+            x = normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
+            y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
             return vec2(x, y);
         case ID_LEFT:
-            float x = normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
-            float y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
+            x = normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
+            y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
             return vec2(x, y);
         case ID_RIGHT:
-            float x = 1 - normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
-            float y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
+            x = 1 - normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
+            y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
             return vec2(x, y);
         case ID_ROOF:
-            float x = normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
-            float y = normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
+            x = normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
+            y = normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
             return vec2(x, y);
         case ID_FLOOR:
-            float x = normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
-            float y = 1 - normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
+            x = normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
+            y = 1 - normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
             return vec2(x, y);
         case ID_BACK:
-            float x = 1 - normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
-            float y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
+            x = 1 - normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
+            y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
             return vec2(x, y);
     }
     return vec2(NaN, NaN);
 }
 
 void main(void) {
+    // return red
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); return;
     
     // 各面の「Minecraftウィンドウ上の位置」をtexcoord系座標にしたもの
     // 画面上部のxの範囲
