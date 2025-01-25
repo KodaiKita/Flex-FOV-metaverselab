@@ -210,37 +210,22 @@ void main(void) {
 
     // 3D空間 での座標
     vec3 coordDestination3D;
-
-    // TODO: このあたりのTexture座標から3D座標に変換する処理が間違っている気がするので確認する
-    // TODO: このあたりの処理を関数にまとめる (convertTextureCoordinateTo3D)
+    
     if (rangeYUpperPart[0] <= texcoord.y && texcoord.y <= rangeYUpperPart[1]) {// マイクラ画面上で Left, Front, Right のいずれか
         if (rangeXLeft[0] < texcoord.x && texcoord.x <= rangeXLeft[1]) {// Left
-            convertTextureCoordinateTo3D(ID_LEFT, texcoord);
             destinationFace = ID_LEFT;
-            normalCoord = vec2(normalizeCoordinate(texcoord, rangeXLeft, rangeYUpperPart));
-            coordDestination3D = vec3(customizeCoordinate(normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
-                                 -RATIO_WIDTH,
-                                 customizeCoordinate(normalCoord.x, -RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0));
+            coordDestination3D = convertTextureCoordinateTo3D(ID_LEFT, texcoord);
         }else if(rangeXFront[0] < texcoord.x && texcoord.x <= rangeXFront[1]){// Front
             destinationFace = ID_FRONT;
-            normalCoord = vec2(normalizeCoordinate(texcoord, rangeXFront, rangeYUpperPart));
-            coordDestination3D = vec3(RATIO_DEPTH/2.0,
-                                 customizeCoordinate(normalCoord.x, -RATIO_WIDTH/2.0, RATIO_WIDTH/2.0),
-                                 customizeCoordinate(normalCoord.y, -RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0));
+            coordDestination3D = convertTextureCoordinateTo3D(ID_FRONT, texcoord);
         }else{// Right
             destinationFace = ID_RIGHT;
-            normalCoord = vec2(normalizeCoordinate(texcoord, rangeXRight, rangeYUpperPart));
-            coordDestination3D = vec3(customizeCoordinate(1.0-normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
-                                 RATIO_WIDTH/2.0,
-                                 customizeCoordinate(normalCoord.x, -RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0));
+            coordDestination3D = convertTextureCoordinateTo3D(ID_RIGHT, texcoord);
         }
     }else if(rangeYFloor[0] <= texcoord.y && texcoord.y <= rangeYFloor[1] &&
              rangeXFloor[0] <= texcoord.x && texcoord.x <= rangeXFloor[1]){// マイクラ画面下で Bottom
         destinationFace = ID_FLOOR;
-        normalCoord = vec2(normalizeCoordinate(texcoord, rangeXFloor, rangeYFloor));
-        coordDestination3D = vec3(customizeCoordinate(1.0-normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
-                             customizeCoordinate(normalCoord.x, -RATIO_WIDTH/2.0, RATIO_WIDTH/2.0),
-                             -RATIO_HEIGHT/2.0);
+        coordDestination3D = convertTextureCoordinateTo3D(ID_FLOOR, texcoord);
     }else{// 範囲外
         gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
         return;
