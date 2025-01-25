@@ -201,7 +201,7 @@ void main(void) {
     vec2 normalCoord;
 
     // 3D空間 での座標
-    vec3 destination3D;
+    vec3 coordDestination3D;
 
     // TODO: このあたりのTexture座標から3D座標に変換する処理が間違っている気がするので確認する
     // TODO: このあたりの処理を関数にまとめる (convertTextureCoordinateTo3D)
@@ -210,19 +210,19 @@ void main(void) {
             convertTextureCoordinateTo3D(ID_LEFT, texcoord);
             destinationFace = ID_LEFT;
             normalCoord = vec2(normalizeCoordinate(texcoord, xRangeLeft, yRangeTop));
-            destination3D = vec3(customizeCoordinate(normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
+            coordDestination3D = vec3(customizeCoordinate(normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
                                  -RATIO_WIDTH,
                                  customizeCoordinate(normalCoord.x, -RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0));
         }else if(xRangeFront[0] < texcoord.x && texcoord.x <= xRangeFront[1]){// Front
             destinationFace = ID_FRONT;
             normalCoord = vec2(normalizeCoordinate(texcoord, xRangeFront, yRangeTop));
-            destination3D = vec3(RATIO_DEPTH/2.0,
+            coordDestination3D = vec3(RATIO_DEPTH/2.0,
                                  customizeCoordinate(normalCoord.x, -RATIO_WIDTH/2.0, RATIO_WIDTH/2.0),
                                  customizeCoordinate(normalCoord.y, -RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0));
         }else{// Right
             destinationFace = ID_RIGHT;
             normalCoord = vec2(normalizeCoordinate(texcoord, xRangeRight, yRangeTop));
-            destination3D = vec3(customizeCoordinate(1.0-normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
+            coordDestination3D = vec3(customizeCoordinate(1.0-normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
                                  RATIO_WIDTH/2.0,
                                  customizeCoordinate(normalCoord.x, -RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0));
         }
@@ -230,7 +230,7 @@ void main(void) {
              xRangeBottom[0] <= texcoord.x && texcoord.x <= xRangeBottom[1]){// マイクラ画面下で Bottom
         destinationFace = ID_FLOOR;
         normalCoord = vec2(normalizeCoordinate(texcoord, xRangeBottom, yRangeBottom));
-        destination3D = vec3(customizeCoordinate(1.0-normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
+        coordDestination3D = vec3(customizeCoordinate(1.0-normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
                              customizeCoordinate(normalCoord.x, -RATIO_WIDTH/2.0, RATIO_WIDTH/2.0),
                              -RATIO_HEIGHT/2.0);
     }else{// 範囲外
@@ -242,7 +242,7 @@ void main(void) {
 
     // とりあえず同じ面との交差点を求める
     bool isIntersected;
-    vec3 intersectionWithSameFace = getIntersectionPoint(destinationFace, destination3D, isIntersected);
+    vec3 intersectionWithSameFace = getIntersectionPoint(destinationFace, coordDestination3D, isIntersected);
 
     if(isIntersected){
         // TODO: 交差点をテクスチャ座標に変換してからピクセルデータをとってくる
@@ -253,7 +253,7 @@ void main(void) {
     for (int i=ID_FRONT; i < ID_BACK; i++) {
         if (i == destinationFace) continue;
         bool isIntersected;
-        vec3 intersection = getIntersectionPoint(i, destination3D, isIntersected);
+        vec3 intersection = getIntersectionPoint(i, coordDestination3D, isIntersected);
 
         if (isIntersected) {
             // TODO: 交差点をテクスチャ座標に変換してからピクセルデータをとってくる
