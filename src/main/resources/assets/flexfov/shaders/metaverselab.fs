@@ -19,6 +19,8 @@ uniform vec2 cursorPos;
 
 uniform bool drawCursor;
 
+const float NaN = 0.0/0.0;
+
 const float RATIO_HEIGHT = 2.714;
 const float RATIO_WIDTH  = 5.841;
 const float RATIO_DEPTH  = 7.298;
@@ -43,6 +45,8 @@ const float METALAB_FLOOR_COORD_Z = -RATIO_HEIGHT/2.0;
 const float METALAB_BACK_COORD_X = -RATIO_DEPTH/2.0;
 
 const vec2 CUBE_RANGE_XYZ = vec2(-RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0);
+
+const int ANTIALIASING = 16;
 
 // Range.x ~ Range.y 内のvalue を 0.0 ~ 1.0 に丸める
 float normalizeCoordinate(float value, vec2 range) {
@@ -83,52 +87,52 @@ vec3 getIntersectionPoint(int targetFace, vec3 destination3D, out bool isInterse
     isIntersected = false;
     switch(targetFace) {
         case ID_FRONT:
-            float x = height/2;
+            float x = RATIO_HEIGHT/2.0;
             float t = x / destination3D.x;
             if (t < 0.0 || t > 1.0) return nullVec;
             float y = destination3D.y * t;
             float z = destination3D.z * t;
-            if (-height/2 <= y && y <= height/2 && -height/2 <= z && z <= height/2) isIntersected = true;
+            if (-RATIO_HEIGHT/2.0 <= y && y <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= z && z <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_LEFT:
-            float y = -width/2;
+            float y = -width/2.0;
             float t = y / destination3D.y;
             if (t < 0.0 || t > 1.0) return nullVec;
             float x = destination3D.x * t;
             float z = destination3D.z * t;
-            if (-height/2 <= x && x <= height/2 && -height/2 <= z && z <= height/2) isIntersected = true;
+            if (-RATIO_HEIGHT/2.0 <= x && x <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= z && z <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_RIGHT:
-            float y = width/2;
+            float y = width/2.0;
             float t = y / destination3D.y;
             if (t < 0.0 || t > 1.0) return nullVec;
             float x = destination3D.x * t;
             float z = destination3D.z * t;
-            if (-height/2 <= x && x <= height/2 && -height/2 <= z && z <= height/2) isIntersected = true;
+            if (-RATIO_HEIGHT/2.0 <= x && x <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= z && z <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_ROOF:
-            float z = height/2;
+            float z = RATIO_HEIGHT/2.0;
             float t = z / destination3D.z;
             if (t < 0.0 || t > 1.0) return nullVec;
             float x = destination3D.x * t;
             float y = destination3D.y * t;
-            if (-height/2 <= x && x <= height/2 && -height/2 <= y && y <= height/2) isIntersected = true;
+            if (-RATIO_HEIGHT/2.0 <= x && x <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= y && y <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_FLOOR:
-            float z = -height/2;
+            float z = -RATIO_HEIGHT/2.0;
             float t = z / destination3D.z;
             if (t < 0.0 || t > 1.0) return nullVec;
             float x = destination3D.x * t;
             float y = destination3D.y * t;
-            if (-height/2 <= x && x <= height/2 && -height/2 <= y && y <= height/2) isIntersected = true;
+            if (-RATIO_HEIGHT/2.0 <= x && x <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= y && y <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_BACK:
-            float x = -height/2;
+            float x = -RATIO_HEIGHT/2.0;
             float t = x / destination3D.x;
             if (t < 0.0 || t > 1.0) return nullVec;
             float y = destination3D.y * t;
             float z = destination3D.z * t;
-            if (-height/2 <= y && y <= height/2 && -height/2 <= z && z <= height/2) isIntersected = true;
+            if (-RATIO_HEIGHT/2.0 <= y && y <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= z && z <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
     }
     return nullVec;
@@ -210,7 +214,7 @@ void main(void) {
 
     // 3D空間 での座標
     vec3 coordDestination3D;
-    
+
     if (rangeYUpperPart[0] <= texcoord.y && texcoord.y <= rangeYUpperPart[1]) {// マイクラ画面上で Left, Front, Right のいずれか
         if (rangeXLeft[0] < texcoord.x && texcoord.x <= rangeXLeft[1]) {// Left
             destinationFace = ID_LEFT;
@@ -231,15 +235,17 @@ void main(void) {
         return;
     }
 
-    // Cube のどの面のピクセルを持ってくるか計算する
+    // Cube のどの面のテクセルを持ってくるか計算する
 
     // とりあえず同じ面との交差点を求める
     bool isIntersected;
     vec3 intersectionWithSameFace = getIntersectionPoint(destinationFace, coordDestination3D, isIntersected);
 
+    // 交差点がある場合
     if(isIntersected){
-        // TODO: 交差点をテクスチャ座標に変換してからピクセルデータをとってくる
-
+        // TODO: 交差点をテクスチャ座標に変換してからテクセルデータをとってくる
+        vec2 textureCoord = convert3DToTextureCoordinate(destinationFace, intersectionWithSameFace);
+        gl_FragColor = vec4(texture2D(texFront, textureCoord).rgb, 1.0); return;
     }
 
     // 他の面を試す
@@ -250,7 +256,8 @@ void main(void) {
 
         if (isIntersected) {
             // TODO: 交差点をテクスチャ座標に変換してからピクセルデータをとってくる
-
+            vec2 textureCoord = convert3DToTextureCoordinate(i, intersection);
+            gl_FragColor = vec4(texture2D(texFront, textureCoord).rgb, 1.0); return;
             break;
         }
     }
