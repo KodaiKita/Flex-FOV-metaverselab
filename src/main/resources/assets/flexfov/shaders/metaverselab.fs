@@ -193,14 +193,14 @@ void main(void) {
     // 各面の「Minecraftウィンドウ上の位置」をtexcoord系座標にしたもの
     // 画面上部のxの範囲
     vec2 rangeXLeft = vec2(-1.0, -1.0 + RATIO_DEPTH*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH));
-    vec2 rangeXFront = vec2(xRange[1], -1.0 + (RATIO_DEPTH+RATIO_WIDTH)*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH));
-    vec2 rangeXRight = vec2(xRange[1], 1.0);
+    vec2 rangeXFront = vec2(rangeXLeft[1], -1.0 + (RATIO_DEPTH+RATIO_WIDTH)*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH));
+    vec2 rangeXRight = vec2(rangeXFront[1], 1.0);
 
     // 画面上部 (Left, Front, Right) の y の範囲
     vec2 rangeYUpperPart = vec2(1.0 - (2.0*RATIO_HEIGHT/(RATIO_HEIGHT+RATIO_DEPTH)), 1.0);
 
     vec2 rangeXFloor = vec2(-1.0 + RATIO_DEPTH*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH), -1.0 + (RATIO_DEPTH+RATIO_WIDTH)*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH));
-    vec2 rangeYFloor = vec2(yRange[0] - 2.0*RATIO_DEPTH/(RATIO_HEIGHT+RATIO_DEPTH) , yRange[0]);
+    vec2 rangeYFloor = vec2(rangeYUpperPart[0] - 2.0*RATIO_DEPTH/(RATIO_HEIGHT+RATIO_DEPTH) , rangeYUpperPart[0]);
 
     // 現在のピクセルはMetaVerseLab のどの面か計算する
     int destinationFace;
