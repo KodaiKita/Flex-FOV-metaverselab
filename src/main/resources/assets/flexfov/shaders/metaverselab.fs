@@ -81,55 +81,58 @@ float customizeCoordinate(float value, vec2 range) {
 // x 軸 →
 // y 軸 ↑
 
+// todo: うまく交差点が出てきてない模様
 vec3 getIntersectionPoint(int targetFace, vec3 destination3D, out bool isIntersected) {
     vec3 intersection;
     vec3 nullVec = vec3(NaN, NaN, NaN);
+
+    const float halfCubeEdge = RATIO_HEIGHT/2.0;
     isIntersected = false;
     switch(targetFace) {
         float x, y, z, t;
         case ID_FRONT:
-            x = RATIO_HEIGHT/2.0;
-            t = x / destination3D.x;
+            x = halfCubeEdge;
+            t = x / (RATIO_DEPTH/2.0);
             if (t < 0.0 || t > 1.0) return nullVec;
             y = destination3D.y * t;
             z = destination3D.z * t;
             if (-RATIO_HEIGHT/2.0 <= y && y <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= z && z <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_LEFT:
-            y = -RATIO_WIDTH/2.0;
-            t = y / destination3D.y;
+            y = -halfCubeEdge;
+            t = y / (-RATIO_WIDTH/2.0);
             if (t < 0.0 || t > 1.0) return nullVec;
             x = destination3D.x * t;
             z = destination3D.z * t;
             if (-RATIO_HEIGHT/2.0 <= x && x <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= z && z <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_RIGHT:
-            y = RATIO_WIDTH/2.0;
-            t = y / destination3D.y;
+            y = halfCubeEdge;
+            t = y / (RATIO_WIDTH/2.0);
             if (t < 0.0 || t > 1.0) return nullVec;
             x = destination3D.x * t;
             z = destination3D.z * t;
             if (-RATIO_HEIGHT/2.0 <= x && x <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= z && z <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_ROOF:
-            z = RATIO_HEIGHT/2.0;
-            t = z / destination3D.z;
+            z = -halfCubeEdge;
+            t = z / (-RATIO_HEIGHT/2.0);
             if (t < 0.0 || t > 1.0) return nullVec;
             x = destination3D.x * t;
             y = destination3D.y * t;
             if (-RATIO_HEIGHT/2.0 <= x && x <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= y && y <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_FLOOR:
-            z = -RATIO_HEIGHT/2.0;
-            t = z / destination3D.z;
+            z = halfCubeEdge;
+            t = z / (RATIO_HEIGHT/2.0);
             if (t < 0.0 || t > 1.0) return nullVec;
             x = destination3D.x * t;
             y = destination3D.y * t;
             if (-RATIO_HEIGHT/2.0 <= x && x <= RATIO_HEIGHT/2.0 && -RATIO_HEIGHT/2.0 <= y && y <= RATIO_HEIGHT/2.0) isIntersected = true;
             return vec3(x, y, z);
         case ID_BACK:
-            x = -RATIO_HEIGHT/2.0;
-            t = x / destination3D.x;
+            x = -halfCubeEdge;
+            t = x / (-RATIO_DEPTH/2.0);
             if (t < 0.0 || t > 1.0) return nullVec;
             y = destination3D.y * t;
             z = destination3D.z * t;
@@ -176,7 +179,7 @@ vec2 convert3DToTextureCoordinate(int targetFace, vec3 positionOnCubeFace3D) {
             y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
             return vec2(x, y);
         case ID_RIGHT:
-            x = 1 - normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
+            x = 1.0 - normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
             y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
             return vec2(x, y);
         case ID_ROOF:
@@ -185,10 +188,10 @@ vec2 convert3DToTextureCoordinate(int targetFace, vec3 positionOnCubeFace3D) {
             return vec2(x, y);
         case ID_FLOOR:
             x = normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
-            y = 1 - normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
+            y = 1.0 - normalizeCoordinate(positionOnCubeFace3D.x, CUBE_RANGE_XYZ);
             return vec2(x, y);
         case ID_BACK:
-            x = 1 - normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
+            x = 1.0 - normalizeCoordinate(positionOnCubeFace3D.y, CUBE_RANGE_XYZ);
             y = normalizeCoordinate(positionOnCubeFace3D.z, CUBE_RANGE_XYZ);
             return vec2(x, y);
     }
@@ -196,8 +199,6 @@ vec2 convert3DToTextureCoordinate(int targetFace, vec3 positionOnCubeFace3D) {
 }
 
 void main(void) {
-    // return red
-    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); return;
     
     // 各面の「Minecraftウィンドウ上の位置」をtexcoord系座標にしたもの
     // 画面上部のxの範囲
@@ -211,6 +212,15 @@ void main(void) {
     vec2 rangeXFloor = vec2(-1.0 + RATIO_DEPTH*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH), -1.0 + (RATIO_DEPTH+RATIO_WIDTH)*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH));
     vec2 rangeYFloor = vec2(rangeYUpperPart[0] - 2.0*RATIO_DEPTH/(RATIO_HEIGHT+RATIO_DEPTH) , rangeYUpperPart[0]);
 
+    // Floor 立方体の接地面 範囲
+    vec2 rangeXFloorCube = vec2(rangeXFloor[0] / RATIO_WIDTH * RATIO_HEIGHT, rangeXFloor[1] / RATIO_WIDTH * RATIO_HEIGHT);
+    vec2 rangeYFloorCube;
+    {
+        float sizeYFloor = rangeYFloor[1] - rangeYFloor[0];
+        float offset = sizeYFloor/ 2.0 / RATIO_DEPTH * RATIO_HEIGHT;
+        float center = (rangeYFloor[0] + rangeYFloor[1]) / 2.0;
+        rangeYFloorCube = vec2(center-offset, center+offset);
+    }
     // 現在のピクセルはMetaVerseLab のどの面か計算する
     int destinationFace;
 
@@ -222,17 +232,42 @@ void main(void) {
 
     if (rangeYUpperPart[0] <= texcoord.y && texcoord.y <= rangeYUpperPart[1]) {// マイクラ画面上で Left, Front, Right のいずれか
         if (rangeXLeft[0] < texcoord.x && texcoord.x <= rangeXLeft[1]) {// Left
+            // debug: return red
+//            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); return;
+
             destinationFace = ID_LEFT;
             coordDestination3D = convertTextureCoordinateTo3D(ID_LEFT, texcoord);
         }else if(rangeXFront[0] < texcoord.x && texcoord.x <= rangeXFront[1]){// Front
+            // debug: return green
+//            gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0); return;
+
             destinationFace = ID_FRONT;
             coordDestination3D = convertTextureCoordinateTo3D(ID_FRONT, texcoord);
         }else{// Right
+            // debug: return blue
+//            gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0); return;
+
             destinationFace = ID_RIGHT;
             coordDestination3D = convertTextureCoordinateTo3D(ID_RIGHT, texcoord);
         }
     }else if(rangeYFloor[0] <= texcoord.y && texcoord.y <= rangeYFloor[1] &&
              rangeXFloor[0] <= texcoord.x && texcoord.x <= rangeXFloor[1]){// マイクラ画面下で Bottom
+        // debug: return yellow
+//        gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0); return;
+        // Floor 立方体の接地面 のとき
+        if(rangeXFloorCube[0] <= texcoord.x && texcoord.x <= rangeXFloorCube[1] &&
+           rangeYFloorCube[0] <= texcoord.y && texcoord.y <= rangeYFloorCube[1]){
+            // texBottomをそのまま配置
+            //debug: return brown
+//            gl_FragColor = vec4(0.5, 0.25, 0.0, 1.0); return;
+
+            vec2 textureCoord = vec2(normalizeCoordinate(texcoord.x, rangeXFloorCube), normalizeCoordinate(texcoord.y, rangeYFloorCube));
+            gl_FragColor = vec4(texture2D(texBottom, textureCoord).rgb, 1.0); return;
+        }else{
+            // debug: return cyan
+//            gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0); return;
+        }
+
         destinationFace = ID_FLOOR;
         coordDestination3D = convertTextureCoordinateTo3D(ID_FLOOR, texcoord);
     }else{// 範囲外
@@ -266,4 +301,7 @@ void main(void) {
             break;
         }
     }
+
+    // エラー色(マゼンタ)
+    gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
 }
