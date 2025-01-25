@@ -74,3 +74,12 @@ publishing {
 		// retrieving dependencies.
 	}
 }
+
+loom {
+	runs {
+		client {
+			// 解像度を設定
+			programArgs '--width', '1280', '--height', '627'
+		}
+	}
+}
