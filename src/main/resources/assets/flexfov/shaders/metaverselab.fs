@@ -74,7 +74,7 @@ float customizeCoordinate(float value, vec2 range) {
 
 // GLSLとMinecraft ウィンドウの座標関係は,
 // Minecraft の画面内で, 左下が texcoord = (-1, -1), 右上が texcoord = (1, 1) になる
-// x 軸 ←
+// x 軸 →
 // y 軸 ↑
 
 vec3 getIntersectionPoint(int targetFace, vec3 destination3D, out bool isIntersected) {
@@ -190,14 +190,17 @@ vec2 convert3DToTextureCoordinate(int targetFace, vec3 positionOnCubeFace3D) {
 
 void main(void) {
     
-    vec2 xRangeLeft = vec2(-1.0, -1.0 + RATIO_DEPTH*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH));
-    vec2 xRangeFront = vec2(xRange[1], -1.0 + (RATIO_DEPTH+RATIO_WIDTH)*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH));
-    vec2 xRangeRight = vec2(xRange[1], 1.0);
+    // 各面の「Minecraftウィンドウ上の位置」をtexcoord系座標にしたもの
+    // 画面上部のxの範囲
+    vec2 rangeXLeft = vec2(-1.0, -1.0 + RATIO_DEPTH*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH));
+    vec2 rangeXFront = vec2(xRange[1], -1.0 + (RATIO_DEPTH+RATIO_WIDTH)*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH));
+    vec2 rangeXRight = vec2(xRange[1], 1.0);
 
-    vec2 yRangeTop = vec2(1.0 - (2.0*RATIO_HEIGHT/(RATIO_HEIGHT+RATIO_DEPTH)), 1.0);
+    // 画面上部 (Left, Front, Right) の y の範囲
+    vec2 rangeYUpperPart = vec2(1.0 - (2.0*RATIO_HEIGHT/(RATIO_HEIGHT+RATIO_DEPTH)), 1.0);
 
-    vec2 xRangeBottom = vec2(-1.0 + RATIO_DEPTH*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH), -1.0 + (RATIO_DEPTH+RATIO_WIDTH)*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH));
-    vec2 yRangeBottom = vec2(yRange[0] - 2.0*RATIO_DEPTH/(RATIO_HEIGHT+RATIO_DEPTH) , yRange[0]);
+    vec2 rangeXFloor = vec2(-1.0 + RATIO_DEPTH*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH), -1.0 + (RATIO_DEPTH+RATIO_WIDTH)*2.0/(RATIO_DEPTH*2.0+RATIO_WIDTH));
+    vec2 rangeYFloor = vec2(yRange[0] - 2.0*RATIO_DEPTH/(RATIO_HEIGHT+RATIO_DEPTH) , yRange[0]);
 
     // 現在のピクセルはMetaVerseLab のどの面か計算する
     int destinationFace;
@@ -210,31 +213,31 @@ void main(void) {
 
     // TODO: このあたりのTexture座標から3D座標に変換する処理が間違っている気がするので確認する
     // TODO: このあたりの処理を関数にまとめる (convertTextureCoordinateTo3D)
-    if (yRangeTop[0] <= texcoord.y && texcoord.y <= yRangeTop[1]) {// マイクラ画面上で Left, Front, Right のいずれか
-        if (xRangeLeft[0] < texcoord.x && texcoord.x <= xRangeLeft[1]) {// Left
+    if (rangeYUpperPart[0] <= texcoord.y && texcoord.y <= rangeYUpperPart[1]) {// マイクラ画面上で Left, Front, Right のいずれか
+        if (rangeXLeft[0] < texcoord.x && texcoord.x <= rangeXLeft[1]) {// Left
             convertTextureCoordinateTo3D(ID_LEFT, texcoord);
             destinationFace = ID_LEFT;
-            normalCoord = vec2(normalizeCoordinate(texcoord, xRangeLeft, yRangeTop));
+            normalCoord = vec2(normalizeCoordinate(texcoord, rangeXLeft, rangeYUpperPart));
             coordDestination3D = vec3(customizeCoordinate(normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
                                  -RATIO_WIDTH,
                                  customizeCoordinate(normalCoord.x, -RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0));
-        }else if(xRangeFront[0] < texcoord.x && texcoord.x <= xRangeFront[1]){// Front
+        }else if(rangeXFront[0] < texcoord.x && texcoord.x <= rangeXFront[1]){// Front
             destinationFace = ID_FRONT;
-            normalCoord = vec2(normalizeCoordinate(texcoord, xRangeFront, yRangeTop));
+            normalCoord = vec2(normalizeCoordinate(texcoord, rangeXFront, rangeYUpperPart));
             coordDestination3D = vec3(RATIO_DEPTH/2.0,
                                  customizeCoordinate(normalCoord.x, -RATIO_WIDTH/2.0, RATIO_WIDTH/2.0),
                                  customizeCoordinate(normalCoord.y, -RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0));
         }else{// Right
             destinationFace = ID_RIGHT;
-            normalCoord = vec2(normalizeCoordinate(texcoord, xRangeRight, yRangeTop));
+            normalCoord = vec2(normalizeCoordinate(texcoord, rangeXRight, rangeYUpperPart));
             coordDestination3D = vec3(customizeCoordinate(1.0-normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
                                  RATIO_WIDTH/2.0,
                                  customizeCoordinate(normalCoord.x, -RATIO_HEIGHT/2.0, RATIO_HEIGHT/2.0));
         }
-    }else if(yRangeBottom[0] <= texcoord.y && texcoord.y <= yRangeBottom[1] &&
-             xRangeBottom[0] <= texcoord.x && texcoord.x <= xRangeBottom[1]){// マイクラ画面下で Bottom
+    }else if(rangeYFloor[0] <= texcoord.y && texcoord.y <= rangeYFloor[1] &&
+             rangeXFloor[0] <= texcoord.x && texcoord.x <= rangeXFloor[1]){// マイクラ画面下で Bottom
         destinationFace = ID_FLOOR;
-        normalCoord = vec2(normalizeCoordinate(texcoord, xRangeBottom, yRangeBottom));
+        normalCoord = vec2(normalizeCoordinate(texcoord, rangeXFloor, rangeYFloor));
         coordDestination3D = vec3(customizeCoordinate(1.0-normalCoord.y, -RATIO_DEPTH/2.0, RATIO_DEPTH/2.0),
                              customizeCoordinate(normalCoord.x, -RATIO_WIDTH/2.0, RATIO_WIDTH/2.0),
                              -RATIO_HEIGHT/2.0);
