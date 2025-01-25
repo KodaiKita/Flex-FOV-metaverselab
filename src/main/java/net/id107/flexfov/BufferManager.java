@@ -12,7 +12,7 @@ import net.minecraft.client.util.Window;
 public class BufferManager {
 
 	private static Framebuffer framebuffer;
-	public static int[] framebufferTextures = new int[4];
+	public static int[] framebufferTextures = new int[6];
 	
 	private static float minX;
 	private static float maxX;
@@ -37,12 +37,10 @@ public class BufferManager {
 		
 		Window window = MinecraftClient.getInstance().getWindow();
 		int width = Math.min(window.getWidth(), window.getHeight());
-		int height = (int) (width);
+		int height = width;
 
 		// Create a framebuffer with a square texture
 		framebuffer = new Framebuffer(width, height, false, false);
-
-		int framebufferTextureSize;
 
 		for (int i = 0; i < framebufferTextures.length; i++) {
 			framebufferTextures[i] = GL11.glGenTextures();

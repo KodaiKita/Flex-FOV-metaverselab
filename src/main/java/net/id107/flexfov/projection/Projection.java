@@ -89,6 +89,13 @@ public abstract class Projection {
 				mc.gameRenderer.renderWorld(tickDelta, startTime, new MatrixStack());
 				saveRenderPass();
 			}
+			if (Math.max(getFovX(), getFovY()) > 250 || zoom < 0) {
+				renderPass = 5;
+				GL11.glViewport(0, 0, displayWidth, displayHeight);
+				mc.worldRenderer.scheduleTerrainUpdate();
+				mc.gameRenderer.renderWorld(tickDelta, startTime, new MatrixStack());
+				saveRenderPass();
+			}
 		}
 		renderPass = 0;
 		GL11.glViewport(0, 0, displayWidth, displayHeight);
@@ -230,6 +237,10 @@ public abstract class Projection {
 		GL20.glUniform1i(texUniform, 2);
 		texUniform = GL20.glGetUniformLocation(shaderProgram, "texBottom");
 		GL20.glUniform1i(texUniform, 3);
+		texUniform = GL20.glGetUniformLocation(shaderProgram, "texTop");
+		GL20.glUniform1i(texUniform, 4);
+		texUniform = GL20.glGetUniformLocation(shaderProgram, "texBack");
+		GL20.glUniform1i(texUniform, 5);
 		
 //		int fovxUniform = GL20.glGetUniformLocation(shaderProgram, "fovx");
 //		GL20.glUniform1f(fovxUniform, (float) getFovX());
