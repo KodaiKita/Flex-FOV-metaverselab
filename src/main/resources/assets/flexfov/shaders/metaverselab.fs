@@ -72,6 +72,11 @@ float customizeCoordinate(float value, vec2 range) {
 // 交差しない場合は (NaN, 0, 0) を返す
 // Cube の面と交差する場合は isIntersected を true にする
 
+// GLSLとMinecraft ウィンドウの座標関係は,
+// Minecraft の画面内で, 左下が texcoord = (-1, -1), 右上が texcoord = (1, 1) になる
+// x 軸 ←
+// y 軸 ↑
+
 vec3 getIntersectionPoint(int targetFace, vec3 destination3D, out bool isIntersected) {
     vec3 intersection;
     vec3 nullVec = vec3(NaN, NaN, NaN);
