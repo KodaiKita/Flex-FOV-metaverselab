@@ -89,7 +89,7 @@ public class Cubic extends Projection {
 				GL11.glViewport(0, 0, displayWidth, displayHeight);
 				mc.worldRenderer.scheduleTerrainUpdate();
 				mc.gameRenderer.renderWorld(tickDelta, startTime, new MatrixStack());
-				System.out.println("いや、呼ばれとるわ！renderPass = " + renderPass);
+				System.out.println("renderPass = " + renderPass);
 				saveRenderPass();
 			}
 		}
