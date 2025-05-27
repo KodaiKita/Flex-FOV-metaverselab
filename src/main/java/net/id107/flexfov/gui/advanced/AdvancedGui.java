@@ -31,6 +31,8 @@ public class AdvancedGui extends SettingsGui {
 			return new FisheyeGui(parent);
 		case 5:
 			return new EquirectangularGui(parent);
+		case 6:
+			return new MetaverseLabGui(parent);
 		}
 	}
 	
@@ -100,12 +102,15 @@ public class AdvancedGui extends SettingsGui {
 
 		button = new ButtonWidget(width / 2 - 180, height / 6 + 36 + 24, 100, 20,
 				new LiteralText("MetaverseLab"), (buttonWidget) -> {
-//			currentGui = 5;
-//			client.openScreen(new EquirectangularGui(parentScreen));
-		});
+					currentGui = 6;
+					client.openScreen(new MetaverseLabGui(parentScreen));
+				});
+		if (this instanceof MetaverseLabGui) {
+			button.active = false;
+		}
 		addButton(button);
 		
-		if (!(this instanceof CubicGui)) {
+		if (!(this instanceof CubicGui || this  instanceof MetaverseLabGui)) {
 			DoubleOption zoom = new DoubleOption("zoom", -2, 2, 0.05f,
 					(gameOptions) -> {return (double) Projection.zoom;},
 					(gameOptions, number) -> {Projection.zoom = (float)(double)number; ConfigManager.saveConfig();},
