@@ -22,12 +22,12 @@ public class CylinderGui extends AdvancedGui {
 				(gameOptions) -> {return Projection.getProjection().getFovX();},
 				(gameOptions, number) -> {Projection.fov = number; ConfigManager.saveConfig();},
 				(gameOptions, doubleOption) -> {return new LiteralText("Horizontal FOV: " + Math.round(Projection.getProjection().getFovX()));});
-		addButton(FOVX.createButton(client.options, width / 2 - 180, height / 6 + 60, 360));
+		addButton(FOVX.createButton(client.options, width / 2 - 180, height / 6 + 60 + 24, 360));
 		
 		DoubleOption FOVY = new DoubleOption("cylinderFovY", 0, 180, 1,
 				(gameOptions) -> {return Projection.getProjection().getFovY();},
 				(gameOptions, number) -> {Cylinder.fovy = number; ConfigManager.saveConfig();},
 				(gameOptions, doubleOption) -> {return new LiteralText("Vertical FOV: " + Math.round(Projection.getProjection().getFovY()));});
-		addButton(FOVY.createButton(client.options, width / 2 - 180, height / 6 + 84, 180));
+		addButton(FOVY.createButton(client.options, width / 2 - 180, height / 6 + 84 + 24, 180));
 	}
 }

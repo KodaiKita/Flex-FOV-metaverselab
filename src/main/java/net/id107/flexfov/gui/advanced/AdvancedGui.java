@@ -87,7 +87,7 @@ public class AdvancedGui extends SettingsGui {
 			button.active = false;
 		}
 		addButton(button);
-		
+
 		button = new ButtonWidget(width / 2 + 80, height / 6 + 36, 100, 20,
 				new LiteralText("Equirectangular"), (buttonWidget) -> {
 					currentGui = 5;
@@ -97,16 +97,23 @@ public class AdvancedGui extends SettingsGui {
 			button.active = false;
 		}
 		addButton(button);
+
+		button = new ButtonWidget(width / 2 - 180, height / 6 + 36 + 24, 100, 20,
+				new LiteralText("MetaverseLab"), (buttonWidget) -> {
+//			currentGui = 5;
+//			client.openScreen(new EquirectangularGui(parentScreen));
+		});
+		addButton(button);
 		
 		if (!(this instanceof CubicGui)) {
 			DoubleOption zoom = new DoubleOption("zoom", -2, 2, 0.05f,
 					(gameOptions) -> {return (double) Projection.zoom;},
 					(gameOptions, number) -> {Projection.zoom = (float)(double)number; ConfigManager.saveConfig();},
 					(gameOptions, doubleOption) -> {return new LiteralText(String.format("Zoom: %.2f", Projection.zoom));});
-			addButton(zoom.createButton(client.options, width / 2 + 5, height / 6 + 84, 150));
+			addButton(zoom.createButton(client.options, width / 2 + 5, height / 6 + 84 + 24, 150));
 		}
 		
-		addButton(new ButtonWidget(width / 2 + 5, height / 6 + 108, 150, 20,
+		addButton(new ButtonWidget(width / 2 + 5, height / 6 + 108 + 24, 150, 20,
 				new LiteralText("Resize Gui: " + (Projection.resizeGui ? "ON" : "OFF")), (buttonWidget) -> {
 					Projection.resizeGui = !Projection.resizeGui;
 					buttonWidget.setMessage(new LiteralText("Resize Gui: " + (Projection.resizeGui ? "ON" : "OFF")));
