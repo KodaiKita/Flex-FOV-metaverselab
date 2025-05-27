@@ -58,7 +58,7 @@ public abstract class Projection {
 	}
 	
 	public String getVertexShader() {
-		return Reader.read("flexfov:shaders/quad.vs");
+		return Reader.read("flexfov:shaders/quad.vsh");
 	}
 	
 	public abstract String getFragmentShader();
