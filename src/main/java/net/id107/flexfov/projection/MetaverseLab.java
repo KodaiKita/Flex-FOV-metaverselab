@@ -6,7 +6,7 @@ public class MetaverseLab extends Projection {
 
     @Override
     public String getFragmentShader() {
-        return Reader.read("flexfov:shaders/metaverselab-fov.fsh");
+        return Reader.read("flexfov:shaders/test.fsh");
     }
 
     @Override
