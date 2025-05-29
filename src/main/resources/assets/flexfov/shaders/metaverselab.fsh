@@ -21,9 +21,35 @@ uniform vec2 cursorPos;
 
 uniform bool drawCursor;
 
+
+bool drawPoint(vec2 coord, vec4 color) {
+	float pointSize = 0.01;
+	if ( coord.x-pointSize/2.0 <= texcoord.x &&
+		 texcoord.x < coord.x+pointSize/2.0 &&
+		 coord.y-pointSize/2.0 <= texcoord.y &&
+		 texcoord.y < coord.y+pointSize/2.0) {
+
+		gl_FragColor = color;
+		return true;
+	}
+	return false;
+}
+
 void main(void) {
 	//Anti-aliasing
 	vec4 colorN[16];
+
+	// debug points
+
+	// red point on (0, 0)
+	if (drawPoint(vec2(0.0, 0.0), vec4(1.0, 0.0, 0.0, 1.0))) {
+		return;
+	}
+
+	// green point on (0.5, 0.5)
+	if (drawPoint(vec2(0.5, 0.5), vec4(0.0, 1.0, 0.0, 1.0))) {
+		return;
+	}
 
 	for (int loop = 0; loop < antialiasing; loop++) {
 		vec2 coord = texcoord+pixelOffset[loop];
