@@ -79,6 +79,63 @@ void main(void) {
             -1.0 + (depthRatio+widthRatio)*2.0/(depthRatio*2.0+widthRatio));
             if (xRange[0] < coord.x && coord.x <= xRange[1]) {
                 // return green;
+                // 視線ベクトルを計算 Front は 視線ベクトル空間では, Y = 1 の平面 xが横軸, zが縦軸
+                // xRange[0] ～ xRange[1] の範囲の coord.x を -widthRatio/2.0 ～ widthRatio/2.0 に変換
+                float x = (coord.x - xRange[0]) / (xRange[1] - xRange[0]) * widthRatio - widthRatio / 2.0;
+                float z = (coord.y - yRange[0]) / (yRange[1] - yRange[0]) * heightRatio - heightRatio / 2.0;
+                float y = depthRatio/2.0;
+                vec3 viewVector = vec3(x, y, z);
+                // viewVector.x y z の最大の絶対値を持つものを選ぶ
+
+                if (abs(viewVector.x) >= abs(viewVector.y) && abs(viewVector.x) >= abs(viewVector.z)) {
+                    // x が最大
+                    if (viewVector.x < 0.0) {
+                        // use texLeft
+                        // x は 辺の半分 = 0.5 に相当する, このとき、 y と z の移動量を計算する
+                        // その値は -0.5 ～ 0.5 の範囲のため, これを 0 ~ 1 の範囲に変換する = これがテクスチャ座標になる
+                        float tex_x = 0.5 / x * y + 0.5;
+                        float tex_y = 0.5 / x * z + 0.5;
+
+                        gl_FragColor = texture2D(texLeft, vec2(tex_x, tex_y), 1.0);
+                        return;
+                    }else{
+                        // use texRight
+
+                        // debug return cyan
+                        gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
+                        return;
+                    }
+                }else if (abs(viewVector.y) >= abs(viewVector.x) && abs(viewVector.y) >= abs(viewVector.z)) {
+                    // y が最大
+                    if (viewVector.y < 0.0) {
+                        // use texBack
+
+                        //debug return magenta
+                        gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
+                        return;
+                    }else{
+                        // use texFront
+
+                        // debug return purple
+                        gl_FragColor = vec4(0.5, 0.0, 0.5, 1.0);
+                        return;
+                    }
+                }else{
+                    // z が最大
+
+                    if (viewVector.z < 0.0) {
+                        // use texBottom
+                        // debug return brown
+                        gl_FragColor = vec4(0.5, 0.25, 0.0, 1.0);
+                        return;
+                    }else{
+                        // use texTop
+                        // debug return gray
+                        gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
+                        return;
+                    }
+                }
+                // debug return green
                 gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
                 return;
             }
