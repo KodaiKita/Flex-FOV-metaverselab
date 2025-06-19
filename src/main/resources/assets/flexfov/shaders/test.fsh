@@ -95,6 +95,7 @@ vec3 pickColor(vec3 normalizedViewDirection){
         }
     }
 
+    // f
     vec3 color = vec3(0.0, 0.0, 0.0);
     switch (face_id) {
         float dx, dy, dz;
@@ -120,6 +121,7 @@ vec3 pickColor(vec3 normalizedViewDirection){
 
             // テクスチャ座標(0~1)に変換
             texc = vec2(dx+0.5, dz+0.5);
+            color = texture2D(texFront, texc).rgb;
             break;
         case ID_RIGHT:
             dx = 0.5;
@@ -130,6 +132,7 @@ vec3 pickColor(vec3 normalizedViewDirection){
 
             // テクスチャ座標(0~1)に変換
             texc = vec2(-dy+0.5, dz+0.5);
+            color = texture2D(texRight, texc).rgb;
             break;
         case ID_BOTTOM:
             dz = -0.5;
@@ -140,6 +143,7 @@ vec3 pickColor(vec3 normalizedViewDirection){
 
             // テクスチャ座標(0~1)に変換
             texc = vec2(dx+0.5, dy+0.5);
+            color = texture2D(texBottom, texc).rgb;
             break;
         case ID_TOP:
             dz = 0.5;
@@ -199,7 +203,13 @@ void main(void) {
             // faceLeft
             if (xRange[0] < coord.x && coord.x <= xRange[1]) {
                 // return red;
-                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+                float normalizedX = normalizeFloat(coord.x, xRange[0], xRange[1]);
+                float normalizedY = normalizeFloat(coord.y, yRange[0], yRange[1]);
+                vec3 coord3d = calc3dCoord(vec2(normalizedX, normalizedY), ID_LEFT);
+                // 視線ベクトルを正規化
+                vec3 viewDirection = normalize(coord3d);
+
+                gl_FragColor = vec4(pickColor(viewDirection), 1.0);
                 return;
             }
             // faceFront
@@ -221,16 +231,30 @@ void main(void) {
             // faceRight
             if (xRange[0] < coord.x && coord.x <= xRange[1]) {
                 // return blue;
-                gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+                float normalizedX = normalizeFloat(coord.x, xRange[0], xRange[1]);
+                float normalizedY = normalizeFloat(coord.y, yRange[0], yRange[1]);
+                vec3 coord3d = calc3dCoord(vec2(normalizedX, normalizedY), ID_RIGHT);
+
+                vec3 viewDirection = normalize(coord3d);
+
+                gl_FragColor = vec4(pickColor(viewDirection), 1.0);
                 return;
             }
         // faceBottom
         }else if (yRangeBottom[0] <= coord.y && coord.y <= yRangeBottom[1] && xRangeBottom[0] <= coord.x && coord.x <= xRangeBottom[1]) {
             // return yellow;
-            gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+            float normalizedX = normalizeFloat(coord.x, xRangeBottom[0], xRangeBottom[1]);
+            float normalizedY = normalizeFloat(coord.y, yRangeBottom[0], yRangeBottom[1]);
+            vec3 coord3d = calc3dCoord(vec2(normalizedX, normalizedY), ID_BOTTOM);
+            // 視線ベクトルを正規化
+            vec3 viewDirection = normalize(coord3d);
+
+            gl_FragColor = vec4(pickColor(viewDirection), 1.0);
+//            gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
             return;
         }else {
-            gl_FragColor = backgroundColor;
+            // background color (gray)
+            gl_FragColor = vec4(0.7, 0.7, 0.7, 1.0);
             return;
         }
 }
