@@ -66,6 +66,7 @@ vec3 calc3dCoord(vec2 normalizedCoord, int face_id) {
 }
 
 vec3 pickColor(vec3 normalizedViewDirection){
+
     int face_id;
     // normalizedViewDirection の最大の絶対値を持つ軸を見つける
     float maxDirection;
@@ -184,7 +185,12 @@ vec2 normalizeVec2(vec2 value, vec2 min, vec2 max) {
 
 
 void main(void) {
-    vec2 coord = texcoord;
+    //Anti-aliasing
+    vec4 colorN[16];
+
+    for (int loop = 0; loop < antialiasing; loop++) {
+        vec2 coord = texcoord+pixelOffset[loop];
+
 
         // faceLeft, faceFront, faceRight の y座標範囲
         vec2 yRange = vec2(1.0 - (2.0*heightRatio/(heightRatio+depthRatio)), 1.0);
@@ -209,8 +215,8 @@ void main(void) {
                 // 視線ベクトルを正規化
                 vec3 viewDirection = normalize(coord3d);
 
-                gl_FragColor = vec4(pickColor(viewDirection), 1.0);
-                return;
+                colorN[loop] = vec4(pickColor(viewDirection), 1.0);
+                continue;
             }
             // faceFront
             xRange = vec2(xRange[1],
@@ -223,8 +229,8 @@ void main(void) {
                 // 視線ベクトルを正規化
                 vec3 viewDirection = normalize(coord3d);
 
-                gl_FragColor = vec4(pickColor(viewDirection), 1.0);
-                return;
+                colorN[loop] = vec4(pickColor(viewDirection), 1.0);
+                continue;
             }
 
             xRange = vec2(xRange[1], 1.0);
@@ -237,10 +243,10 @@ void main(void) {
 
                 vec3 viewDirection = normalize(coord3d);
 
-                gl_FragColor = vec4(pickColor(viewDirection), 1.0);
-                return;
+                colorN[loop] = vec4(pickColor(viewDirection), 1.0);
+                continue;
             }
-        // faceBottom
+            // faceBottom
         }else if (yRangeBottom[0] <= coord.y && coord.y <= yRangeBottom[1] && xRangeBottom[0] <= coord.x && coord.x <= xRangeBottom[1]) {
             // return yellow;
             float normalizedX = normalizeFloat(coord.x, xRangeBottom[0], xRangeBottom[1]);
@@ -249,12 +255,21 @@ void main(void) {
             // 視線ベクトルを正規化
             vec3 viewDirection = normalize(coord3d);
 
-            gl_FragColor = vec4(pickColor(viewDirection), 1.0);
-//            gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
-            return;
+            colorN[loop] = vec4(pickColor(viewDirection), 1.0);
+            //            gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+            continue;
         }else {
             // background color (gray)
             gl_FragColor = vec4(0.7, 0.7, 0.7, 1.0);
             return;
         }
+    }
+
+    // アンチエイリアス処理
+    vec4 corner[4];
+    corner[0] = mix(mix(colorN[0], colorN[1], 2.0/3.0), mix(colorN[4], colorN[5], 3.0/5.0), 5.0/8.0);
+    corner[1] = mix(mix(colorN[3], colorN[2], 2.0/3.0), mix(colorN[7], colorN[6], 3.0/5.0), 5.0/8.0);
+    corner[2] = mix(mix(colorN[12], colorN[13], 2.0/3.0), mix(colorN[8], colorN[9], 3.0/5.0), 5.0/8.0);
+    corner[3] = mix(mix(colorN[15], colorN[14], 2.0/3.0), mix(colorN[11], colorN[10], 3.0/5.0), 5.0/8.0);
+    gl_FragColor = mix(mix(corner[0], corner[1], 0.5), mix(corner[2], corner[3], 0.5), 0.5);
 }
