@@ -20,7 +20,8 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "net.id107.flexfov.FlexFOV"
+      "net.id107.flexfov.FlexFOV",
+      "net.id107.flexfov.ControllerCheck"
     ]
   },
   "mixins": [

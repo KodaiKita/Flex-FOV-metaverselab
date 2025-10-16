@@ -11,7 +11,8 @@
     "EntityRendererMixin",
     "GameRendererMixin",
     "OptionsScreenMixin",
-    "ScreenMixin"
+    "ScreenMixin",
+    "PlayerControlMixin"
   ],
   "injectors": {
     "defaultRequire": 1
