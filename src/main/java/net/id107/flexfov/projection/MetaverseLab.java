@@ -19,7 +19,7 @@ public class MetaverseLab extends Projection {
     public void rotateCamera(MatrixStack matrixStack) {
         Matrix4f matrix;
         float playerPitch = mc.player.pitch;
-        System.out.println("playerPitch: " + playerPitch);
+//        System.out.println("playerPitch: " + playerPitch);
 
         // ピッチをリセットする回転（X?軸周りの回転）
 
