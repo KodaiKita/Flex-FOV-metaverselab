@@ -1,15 +1,31 @@
 package net.id107.flexfov;
 
+import net.id107.flexfov.mixin.PlayerControlMixin;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWGamepadState;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.Objects;
 
 public class Controller {
     private GLFWGamepadState gamepadState;
+
+    float movementForward = 0.0f;
+    float movementSideways = 0.0f;
+    boolean isSprinting = true;
+
+    public float getMovementForward() {
+        return movementForward;
+    }
+    public float getMovementSideways() {
+        return movementSideways;
+    }
+    public boolean isSprinting() {
+        return isSprinting;
+    }
 
     public void initialize() {
         if (!GLFW.glfwInit()) {
@@ -112,18 +128,17 @@ public class Controller {
         final float DEAD_ZONE = 0.2f;
 
         // 左右移動 (-1.0f: 左, 1.0f: 右)
-        if (Math.abs(rightStickX) > DEAD_ZONE) {
-            player.input.movementSideways = rightStickX;
+        if (Math.abs(rightStickY) > DEAD_ZONE) {
+            this.movementForward = rightStickY;
         } else {
-            player.input.movementSideways = 0.0f;
+            this.movementForward = 0.0f;
         }
 
         // 前後移動 (-1.0f: 後, 1.0f: 前)
-        // Y軸は上下が逆の場合があるので、必要に応じて -1 を掛ける
-        if (Math.abs(rightStickY) > DEAD_ZONE) {
-            player.input.movementForward = rightStickY;
+        if (Math.abs(rightStickX) > DEAD_ZONE) {
+            this.movementSideways = -rightStickX;
         } else {
-            player.input.movementForward = 0.0f;
+            this.movementSideways = 0.0f;
         }
         
 

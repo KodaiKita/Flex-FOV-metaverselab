@@ -1,5 +1,6 @@
 package net.id107.flexfov.mixin;
 
+import net.id107.flexfov.ControllerManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import org.spongepowered.asm.mixin.Final;
@@ -8,8 +9,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Objects;
 
 @Mixin(ClientPlayerEntity.class)
 public class PlayerControlMixin {
@@ -30,9 +29,14 @@ public class PlayerControlMixin {
         // ここで player.input を更新すれば自動操作が可能
 
         // 前方に移動し続ける例
-//        player.input.pressingForward = true;
-//        player.input.movementForward = 1.0f;
+        player.input.pressingForward = (ControllerManager.controller.getMovementForward() > 0.0f);
+        player.input.movementForward = ControllerManager.controller.getMovementForward();
+
+        // 横方向に移動し続ける例
+        player.input.pressingLeft = (ControllerManager.controller.getMovementSideways() < 0.0f );
+        player.input.movementSideways = ControllerManager.controller.getMovementSideways();
+
         // ダッシュする
-//        this.client.options.keySprint.setPressed(true);
+        this.client.options.keySprint.setPressed(ControllerManager.controller.isSprinting());
     }
 }

@@ -3,8 +3,8 @@ package net.id107.flexfov;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 
-public class ControllerCheck implements ClientModInitializer {
-    private Controller controller;
+public class ControllerManager implements ClientModInitializer {
+    public static Controller controller;
 
     @Override
     public void onInitializeClient() {

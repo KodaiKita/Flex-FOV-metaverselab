@@ -21,7 +21,7 @@
   "entrypoints": {
     "client": [
       "net.id107.flexfov.FlexFOV",
-      "net.id107.flexfov.ControllerCheck"
+      "net.id107.flexfov.ControllerManager"
     ]
   },
   "mixins": [
