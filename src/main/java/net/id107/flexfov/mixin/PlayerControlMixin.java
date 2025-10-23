@@ -28,15 +28,21 @@ public class PlayerControlMixin {
 
         // ここで player.input を更新すれば自動操作が可能
 
-        // 前方に移動し続ける例
+        // ダッシュする
+        this.client.options.keySprint.setPressed(ControllerManager.controller.isSprinting());
+
+        if (ControllerManager.controller.getMovementForward() == 0.0f &&
+            ControllerManager.controller.getMovementSideways() == 0.0f ) {
+            // コントローラーの入力がない場合は何もしない
+            return;
+        }
+        // 前方
         player.input.pressingForward = (ControllerManager.controller.getMovementForward() > 0.0f);
         player.input.movementForward = ControllerManager.controller.getMovementForward();
 
-        // 横方向に移動し続ける例
+        // 横方
         player.input.pressingLeft = (ControllerManager.controller.getMovementSideways() < 0.0f );
         player.input.movementSideways = ControllerManager.controller.getMovementSideways();
 
-        // ダッシュする
-        this.client.options.keySprint.setPressed(ControllerManager.controller.isSprinting());
     }
 }

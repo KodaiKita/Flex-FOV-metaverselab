@@ -195,7 +195,7 @@ public class Controller {
 
 
         // 感度設定（この値を調整して視点移動の速さを変える）
-        final float SENSITIVITY = 2.5f;
+        final float SENSITIVITY = 5.f;
 
         // デッドゾーン（スティックのわずかな傾きを無視する）
         final float DEAD_ZONE = 0.15f;
