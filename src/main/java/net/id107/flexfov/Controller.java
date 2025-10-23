@@ -127,23 +127,23 @@ public class Controller {
         }
         // 例として、すでに入力値が変数に格納されていると仮定します
         // 左スティックの入力を -1.0f から 1.0f の範囲で取得すると仮定
-        float rightStickX = gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X); // 左右
-        float rightStickY = -gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y); // 前後 (Y軸は上下が逆の場合があるので -1 を掛ける)
+        float playerControlStickX = gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X); // 左右
+        float playerControlStickY = -gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y); // 前後 (Y軸は上下が逆の場合があるので -1 を掛ける)
 
-        System.out.println("RightStick: X=" + rightStickX + ", Y=" + rightStickY);
+        System.out.println("RightStick: X=" + playerControlStickX + ", Y=" + playerControlStickY);
         // --- 入力値をプレイヤーの移動に反映 ---
         final float DEAD_ZONE = 0.2f;
 
         // 左右移動 (-1.0f: 左, 1.0f: 右)
-        if (Math.abs(rightStickY) > DEAD_ZONE) {
-            this.movementForward = rightStickY;
+        if (Math.abs(playerControlStickY) > DEAD_ZONE) {
+            this.movementForward = playerControlStickY;
         } else {
             this.movementForward = 0.0f;
         }
 
         // 前後移動 (-1.0f: 後, 1.0f: 前)
-        if (Math.abs(rightStickX) > DEAD_ZONE) {
-            this.movementSideways = -rightStickX;
+        if (Math.abs(playerControlStickX) > DEAD_ZONE) {
+            this.movementSideways = -playerControlStickX;
         } else {
             this.movementSideways = 0.0f;
         }
@@ -193,8 +193,8 @@ public class Controller {
         }
         // 例として、すでに入力値が変数に格納されていると仮定します
         // 値の範囲は -1.0f から 1.0f とします
-        float controllerX = gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X);// 水平方向の入力
-        float controllerY = gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y); // 垂直方向の入力
+        float controllerX = gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X);// 水平方向の入力
+        float controllerY = gamepadState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y); // 垂直方向の入力
 
 //        System.out.println("ControllerX: " + controllerX + ", ControllerY: " + controllerY);
 
