@@ -16,6 +16,8 @@ public class Controller {
     float movementForward = 0.0f;
     float movementSideways = 0.0f;
     boolean isSprinting = true;
+    boolean isJumping = false;
+    boolean isSneaking = false;
 
     public float getMovementForward() {
         return movementForward;
@@ -25,6 +27,14 @@ public class Controller {
     }
     public boolean isSprinting() {
         return isSprinting;
+    }
+
+    public boolean isJumping(){
+        return isJumping;
+    }
+
+    public boolean isSneaking(){
+        return isSneaking;
     }
 
     public void initialize() {
@@ -144,15 +154,13 @@ public class Controller {
 
         // ジャンプ
 //        player.input.jumping = jumpButtonPressed;
+        this.isJumping = gamepadState.buttons(GLFW.GLFW_GAMEPAD_BUTTON_A) == GLFW.GLFW_PRESS;
 
         // (任意) スニーク
         // player.input.sneaking = isControllerSneakButtonPressed();
+        this.isSneaking = gamepadState.buttons(GLFW.GLFW_GAMEPAD_BUTTON_B) == GLFW.GLFW_PRESS;
 
         // (参考) booleanフラグも更新しておくと、他のModとの互換性が高まる場合がある
-        player.input.pressingForward = player.input.movementForward > 0;
-        player.input.pressingBack = player.input.movementForward < 0;
-        player.input.pressingLeft = player.input.movementSideways < 0; // X軸は負の値が左
-        player.input.pressingRight = player.input.movementSideways > 0; // X軸は正の値が右
     }
 
     public void printInputValues(MinecraftClient client) {

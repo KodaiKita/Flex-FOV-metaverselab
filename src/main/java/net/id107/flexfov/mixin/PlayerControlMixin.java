@@ -29,7 +29,14 @@ public class PlayerControlMixin {
         // ここで player.input を更新すれば自動操作が可能
 
         // ダッシュする
-        this.client.options.keySprint.setPressed(ControllerManager.controller.isSprinting());
+//        if (ControllerManager.controller.isSprinting())
+            this.client.options.keySprint.setPressed(ControllerManager.controller.isSprinting());
+
+//        if (ControllerManager.controller.isJumping())
+            this.client.options.keyJump.setPressed(ControllerManager.controller.isJumping());
+
+//        if (ControllerManager.controller.isSneaking())
+            this.client.options.keySneak.setPressed(ControllerManager.controller.isSneaking());
 
         if (ControllerManager.controller.getMovementForward() == 0.0f &&
             ControllerManager.controller.getMovementSideways() == 0.0f ) {
