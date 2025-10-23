@@ -1,12 +1,9 @@
 package net.id107.flexfov;
 
-import net.id107.flexfov.mixin.PlayerControlMixin;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.input.Input;
 import net.minecraft.client.network.ClientPlayerEntity;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWGamepadState;
-import org.spongepowered.asm.mixin.Unique;
 
 import java.util.Objects;
 
